@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/customers")
+@RequestMapping("/customers")
 @RequiredArgsConstructor
 public class CustomerController {
 
@@ -25,6 +25,13 @@ public class CustomerController {
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable("customerId") String customerId) {
         return ResponseEntity.ok(service.getCustomerById(customerId));//
+    }
+
+    @GetMapping("/document")
+    public ResponseEntity<CustomerResponse> getCustomerByDocument(
+            @RequestParam("type") String documentType,
+            @RequestParam("number") String documentNumber) {
+        return ResponseEntity.ok(service.getCustomerByDocument(documentType, documentNumber));
     }
 
     @GetMapping

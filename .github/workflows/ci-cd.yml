@@ -37,6 +37,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Normalize Maven Wrapper Line Endings
+        run: sed -i 's/\r$//' ./microservices/customer-microservice/mvnw
+
       - name: Make Maven Wrapper Executable
         run: chmod +x ./microservices/customer-microservice/mvnw
 

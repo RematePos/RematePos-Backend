@@ -1,3 +1,59 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Local env (no versionar)
-infra/docker/env/.env.local
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Ignore log files ###
+*.log
+logs/
+**/logs/
+
+# OS / temp artifacts
+.DS_Store
+Thumbs.db
+tmp/
+**/tmp/
+
+# Ignore runtime reports generated during local troubleshooting
+/tmp/docker-checks/
+
+# Ignore sensitive environment files
+/infra/docker/env/.env.local
+/infra/docker/env/.env
+/infra/docker/env/.env.*
+
+# Keep shareable templates in version control
+!/infra/docker/env/.env.*.example
+!/infra/docker/env/.env.example
+/infra/docker/env/.env.dev
+/infra/docker/env/.env.main
+/infra/docker/env/.env.qa
+/infra/docker/env/.env.release

@@ -37,6 +37,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Make Maven Wrapper Executable
+        run: chmod +x ./microservices/customer-microservice/mvnw
+
       - name: Build with Maven
         run: |
           echo "====== BUILD ======"

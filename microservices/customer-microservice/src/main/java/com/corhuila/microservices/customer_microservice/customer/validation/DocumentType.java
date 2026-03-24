@@ -43,6 +43,20 @@ public enum DocumentType {
         return codes;
     }
 
+    public boolean isDocumentNumberValid(String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+
+        String trimmed = value.trim();
+
+        // Keep rules explicit per type to preserve business intent.
+        return switch (this) {
+            case CC, DNI, TI, RC, CE -> trimmed.matches("^[0-9]{5,15}$");
+            case PAS -> trimmed.matches("^[A-Za-z0-9]{6,12}$");
+        };
+    }
+
     private boolean matches(String normalized) {
         return code.equals(normalized) || aliases.contains(normalized);
     }

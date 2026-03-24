@@ -1,4 +1,4 @@
-﻿package com.corhuila.microservices.customer_microservice.customer.validation;
+package com.corhuila.microservices.customer_microservice.customer.validation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;

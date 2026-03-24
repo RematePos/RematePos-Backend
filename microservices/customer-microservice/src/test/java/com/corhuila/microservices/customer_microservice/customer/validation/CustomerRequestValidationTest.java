@@ -3,6 +3,8 @@ package com.corhuila.microservices.customer_microservice.customer.validation;
 import com.corhuila.microservices.customer_microservice.customer.dto.CustomerRequest;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +13,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CustomerRequestValidationTest {
 
     private static Validator validator;
+    private static ValidatorFactory validatorFactory;
 
     @BeforeAll
     static void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
+    @AfterAll
+    static void tearDown() {
+        validatorFactory.close();
     }
 
     @Test

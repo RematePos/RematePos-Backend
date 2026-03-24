@@ -1,0 +1,3 @@
+
+# Local env (no versionar)
+infra/docker/env/.env.local

@@ -40,13 +40,13 @@ jobs:
       - name: Build with Maven
         run: |
           echo "====== BUILD ======"
-          mvn -f microservices/pom.xml clean package -DskipTests -U
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml clean package -DskipTests -U
 
       - name: Run tests
         if: github.event_name == 'push'
         run: |
           echo "====== UNIT TESTS ======"
-          mvn -f microservices/pom.xml test -Dmaven.test.failure.ignore=true
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml test -Dmaven.test.failure.ignore=true
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -62,7 +62,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           echo "====== SONAR ANALYSIS ======"
-          ./mvnw sonar:sonar \
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml sonar:sonar \
             -Dsonar.projectKey=microservice-pos \
             -Dsonar.projectName="Microservice POS" \
             -Dsonar.sources=src/main/java \
@@ -78,6 +78,7 @@ jobs:
           files: ./target/site/jacoco/jacoco.xml
           flags: unittests
           name: codecov-umbrella
+          fail_ci_if_error: false
 
       - name: Log in to Container Registry
         if: github.event_name == 'push'

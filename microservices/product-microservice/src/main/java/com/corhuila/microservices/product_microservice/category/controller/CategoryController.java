@@ -4,16 +4,10 @@ import java.util.List;
 
 import com.corhuila.microservices.product_microservice.category.dto.CategoryRequest;
 import com.corhuila.microservices.product_microservice.category.dto.CategoryResponse;
+import com.corhuila.microservices.product_microservice.category.dto.CategoryOptionResponse;
 import com.corhuila.microservices.product_microservice.category.service.CategoryService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +22,11 @@ public class CategoryController {
     @GetMapping()
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         return ResponseEntity.ok(service.getAllCategories());
+    }
+
+    @GetMapping("/options")
+    public ResponseEntity<List<CategoryOptionResponse>> getCategoryOptions() {
+        return ResponseEntity.ok(service.getCategoryOptions());
     }
 
     @PostMapping()

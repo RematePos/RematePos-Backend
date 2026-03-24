@@ -2,6 +2,7 @@ package com.corhuila.microservices.product_microservice.category.service.impl;
 
 import com.corhuila.microservices.product_microservice.category.dto.CategoryRequest;
 import com.corhuila.microservices.product_microservice.category.dto.CategoryResponse;
+import com.corhuila.microservices.product_microservice.category.dto.CategoryOptionResponse;
 import com.corhuila.microservices.product_microservice.category.mapper.CategoryMapper;
 import com.corhuila.microservices.product_microservice.category.model.Category;
 import com.corhuila.microservices.product_microservice.category.repository.CategoryRepository;
@@ -9,6 +10,7 @@ import com.corhuila.microservices.product_microservice.category.service.Category
 import com.corhuila.microservices.product_microservice.exceptions.CategoryException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -25,6 +27,24 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(mapper::toCategoryResponse)
                 .toList();
     }
+
+    @Override
+    public List<CategoryOptionResponse> getCategoryOptions() {
+        return repository.findAll().stream()
+                .map(category -> new CategoryOptionResponse(category.getId(), category.getName()))
+                .toList();
+    }
+
+    @Override
+    public Integer getCategoryIdByName(String name) {
+        if (!StringUtils.hasText(name)) {
+            throw new CategoryException("Category name cannot be null or blank");
+        }
+        return repository.findByNameIgnoreCase(name.trim())
+                .map(Category::getId)
+                .orElseThrow(() -> new CategoryException("Category with name %s not found".formatted(name)));
+    }
+
     @Override
     public Integer createCategory(CategoryRequest request) {
         Category category = mapper.toCategory(request);

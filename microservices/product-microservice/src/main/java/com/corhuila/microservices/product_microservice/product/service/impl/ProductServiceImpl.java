@@ -53,6 +53,12 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Override
+    public List<ProductResponse> getProductsByCategoryName(String name) {
+        Integer categoryId = categoryService.getCategoryIdByName(name);
+        return getProductsByCategoryId(categoryId);
+    }
+
 
     public Integer updateProduct(ProductRequest request) {
         if (request.id() == null) {

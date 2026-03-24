@@ -40,13 +40,13 @@ jobs:
       - name: Build with Maven
         run: |
           echo "====== BUILD ======"
-          ./mvnw clean package -DskipTests -U
+          mvn -f microservices/pom.xml clean package -DskipTests -U
 
       - name: Run tests
         if: github.event_name == 'push'
         run: |
           echo "====== UNIT TESTS ======"
-          ./mvnw test -Dmaven.test.failure.ignore=true
+          mvn -f microservices/pom.xml test -Dmaven.test.failure.ignore=true
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2

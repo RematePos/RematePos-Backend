@@ -6,17 +6,11 @@ import com.corhuila.microservices.product_microservice.product.dto.ProductReques
 import com.corhuila.microservices.product_microservice.product.dto.ProductResponse;
 import com.corhuila.microservices.product_microservice.product.service.ProductService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -37,6 +31,11 @@ public class ProductController {
     @GetMapping("/category/{id}")
     public List<ProductResponse> getProductsByCategoryId(@PathVariable Integer id) {
         return service.getProductsByCategoryId(id);
+    }
+
+    @GetMapping("/category/name/{name}")
+    public List<ProductResponse> getProductsByCategoryName(@PathVariable String name) {
+        return service.getProductsByCategoryName(name);
     }
 
     @GetMapping("/{id}")

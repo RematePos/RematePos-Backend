@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    restart: unless-stopped
+
+  postgresql:
+    restart: unless-stopped
+
+  config-server:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=native,docker,qa
+
+  discovery-server:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,qa
+
+  customer-microservice:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,qa
+
+  product-microservice:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,qa
+
+  cart-microservice:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,qa
+

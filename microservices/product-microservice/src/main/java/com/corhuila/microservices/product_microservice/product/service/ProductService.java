@@ -11,6 +11,7 @@ public interface ProductService {
     List<ProductResponse>getProducts();
     ProductResponse getProductById(Integer id);
     List<ProductResponse> getProductsByCategoryId(Integer id);
+    List<ProductResponse> getProductsByCategoryName(String name);
     Integer updateProduct(ProductRequest request);
     void deleteProduct(Integer id);
     Integer createProduct(ProductRequest request);

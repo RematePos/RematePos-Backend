@@ -1,0 +1,361 @@
+﻿{
+    "info": {
+        "_postman_id": "5f4dc4d4-a6b3-4d2b-8b5f-1b00ab6d9e64",
+        "name": "microservice-pos - endpoints completos",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": "Coleccion completa para customer, product y category. Usa environments dev/qa/release/main."
+    },
+    "item": [
+        {
+            "name": "Customer Service",
+            "item": [
+                {
+                    "name": "Customer - List",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{customerBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Customer - By Id",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{customerBaseUrl}}/{{customerId}}"
+                    }
+                },
+                {
+                    "name": "Customer - By Document",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{customerBaseUrl}}/document?type={{documentType}}&number={{documentNumber}}",
+                            "host": [
+                                "{{customerBaseUrl}}"
+                            ],
+                            "path": [
+                                "document"
+                            ],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "{{documentType}}"
+                                },
+                                {
+                                    "key": "number",
+                                    "value": "{{documentNumber}}"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Customer - Create",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Perez\",\n  \"email\": \"carlos@example.com\",\n  \"documentType\": \"CC\",\n  \"documentNumber\": \"12345678\",\n  \"address\": \"Calle 1 # 2-3\",\n  \"phone\": \"3001234567\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{customerBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Customer - Update",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": \"{{customerId}}\",\n  \"firstName\": \"Carlos\",\n  \"lastName\": \"Perez\",\n  \"email\": \"carlos.updated@example.com\",\n  \"documentType\": \"CC\",\n  \"documentNumber\": \"12345678\",\n  \"address\": \"Calle 99 # 10-20\",\n  \"phone\": \"3001234567\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{customerBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Customer - Delete",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": "{{customerBaseUrl}}/{{customerId}}"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Product Service",
+            "item": [
+                {
+                    "name": "Product - List",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{productBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Product - By Id",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{productBaseUrl}}/{{productId}}"
+                    }
+                },
+                {
+                    "name": "Product - By Category Id",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{productBaseUrl}}/category/{{categoryId}}"
+                    }
+                },
+                {
+                    "name": "Product - By Category Name",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{productBaseUrl}}/category/name/{{categoryName}}"
+                    }
+                },
+                {
+                    "name": "Product - Create",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Producto prueba\",\n  \"description\": \"Creado desde Postman\",\n  \"price\": 10000,\n  \"stock\": 10,\n  \"categoryId\": 1\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{productBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Product - Update",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{productId}},\n  \"name\": \"Producto actualizado\",\n  \"description\": \"Actualizado desde Postman\",\n  \"price\": 12000,\n  \"stock\": 20,\n  \"categoryId\": 1\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{productBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Product - Delete",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": "{{productBaseUrl}}/{{productId}}"
+                    }
+                },
+                {
+                    "name": "Product - Purchase",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n  {\n    \"productId\": {{productId}},\n    \"quantity\": 1\n  }\n]",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{productBaseUrl}}/purchase"
+                    }
+                },
+                {
+                    "name": "Product - Restock",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n  {\n    \"productId\": {{productId}},\n    \"quantity\": 5\n  }\n]",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{productBaseUrl}}/restock"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Category Service",
+            "item": [
+                {
+                    "name": "Category - List",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{categoryBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Category - Options",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{categoryBaseUrl}}/options"
+                    }
+                },
+                {
+                    "name": "Category - By Id",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": "{{categoryBaseUrl}}/{{categoryId}}"
+                    }
+                },
+                {
+                    "name": "Category - Create",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Categoria prueba\",\n  \"description\": \"Creada desde Postman\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{categoryBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Category - Update",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{categoryId}},\n  \"name\": \"Categoria actualizada\",\n  \"description\": \"Actualizada desde Postman\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": "{{categoryBaseUrl}}"
+                    }
+                },
+                {
+                    "name": "Category - Delete",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": "{{categoryBaseUrl}}/{{categoryId}}"
+                    }
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "customerBaseUrl",
+            "value": "http://localhost:8091/api/v1/customers"
+        },
+        {
+            "key": "productBaseUrl",
+            "value": "http://localhost:8092/api/v1/products"
+        },
+        {
+            "key": "categoryBaseUrl",
+            "value": "http://localhost:8092/api/v1/categories"
+        },
+        {
+            "key": "customerId",
+            "value": "replace-with-customer-id"
+        },
+        {
+            "key": "documentType",
+            "value": "CC"
+        },
+        {
+            "key": "documentNumber",
+            "value": "12345678"
+        },
+        {
+            "key": "productId",
+            "value": "1"
+        },
+        {
+            "key": "categoryId",
+            "value": "1"
+        },
+        {
+            "key": "categoryName",
+            "value": "Bebidas"
+        }
+    ]
+}

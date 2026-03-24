@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 
 public record CustomerRequest(
         String id,
+        String documentType,
+        String documentNumber,
         @NotNull(message = "First name is required")
         @NotBlank(message = "First name cannot be blank")
         String firstName,

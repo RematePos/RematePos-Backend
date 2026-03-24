@@ -1,0 +1,34 @@
+services:
+  mongodb:
+    ports: []
+    restart: always
+
+  postgresql:
+    ports: []
+    restart: always
+
+  config-server:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=native,docker,prod
+
+  discovery-server:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,prod
+
+  customer-microservice:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,prod
+
+  product-microservice:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,prod
+
+  cart-microservice:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,prod
+

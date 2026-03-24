@@ -36,6 +36,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public CustomerResponse getCustomerByDocument(String documentType, String documentNumber) {
+        return repository
+                .findByDocumentTypeAndDocumentNumber(documentType, documentNumber)
+                .map(mapper::toCustomerResponse)
+                .orElseThrow(() -> new CustomerNotFoundException(
+                        String.format("Customer with document %s-%s not found", documentType, documentNumber)
+                ));
+    }
+
+    @Override
     public List<CustomerResponse> getCustomers() {
         return repository
                 .findAll().stream()

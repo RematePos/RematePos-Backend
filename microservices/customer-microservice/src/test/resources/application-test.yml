@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: customer-microservice
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/customer_db_test
+      auto-index-creation: true
+
+server:
+  port: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+
+logging:
+  level:
+    root: INFO
+    com.corhuila: DEBUG
+

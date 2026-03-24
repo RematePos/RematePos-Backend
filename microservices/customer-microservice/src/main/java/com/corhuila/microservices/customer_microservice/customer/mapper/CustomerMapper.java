@@ -11,6 +11,8 @@ public class CustomerMapper {
     public Customer toCustomer(CustomerRequest request) {
     return Customer.builder()
             .id(request.id())
+            .documentType(request.documentType())
+            .documentNumber(request.documentNumber())
             .firstName(request.firstName())
             .lastName(request.lastName())
             .email(request.email())
@@ -23,6 +25,8 @@ public class CustomerMapper {
     public CustomerResponse toCustomerResponse(Customer customer) {
         return new CustomerResponse(
                 customer.getId(),
+                customer.getDocumentType(),
+                customer.getDocumentNumber(),
                 customer.getFirstName(),
                 customer.getLastName(),
                 customer.getEmail(),

@@ -23,6 +23,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      checks: write
 
     steps:
       - name: Checkout code
@@ -37,20 +38,26 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Normalize Maven Wrapper Line Endings
+        run: sed -i 's/\r$//' ./microservices/customer-microservice/mvnw
+
+      - name: Make Maven Wrapper Executable
+        run: chmod +x ./microservices/customer-microservice/mvnw
+
       - name: Build with Maven
         run: |
           echo "====== BUILD ======"
-          ./mvnw clean package -DskipTests -U
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml clean package -DskipTests -U
 
       - name: Run tests
         if: github.event_name == 'push'
         run: |
           echo "====== UNIT TESTS ======"
-          ./mvnw test -Dmaven.test.failure.ignore=true
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml test -Dmaven.test.failure.ignore=true
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: always() && github.event_name == 'push'
         with:
           files: '**/target/surefire-reports/TEST-*.xml'
           check_name: Unit Test Results
@@ -62,7 +69,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           echo "====== SONAR ANALYSIS ======"
-          ./mvnw sonar:sonar \
+          ./microservices/customer-microservice/mvnw -f microservices/pom.xml sonar:sonar \
             -Dsonar.projectKey=microservice-pos \
             -Dsonar.projectName="Microservice POS" \
             -Dsonar.sources=src/main/java \
@@ -78,6 +85,7 @@ jobs:
           files: ./target/site/jacoco/jacoco.xml
           flags: unittests
           name: codecov-umbrella
+          fail_ci_if_error: false
 
       - name: Log in to Container Registry
         if: github.event_name == 'push'

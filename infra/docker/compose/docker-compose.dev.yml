@@ -1,0 +1,21 @@
+services:
+  config-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=native,docker,dev
+
+  discovery-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
+  customer-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
+  product-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
+  cart-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+

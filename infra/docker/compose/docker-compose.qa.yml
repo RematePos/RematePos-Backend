@@ -1,9 +1,4 @@
 services:
-  mongodb:
-    restart: unless-stopped
-
-  postgresql:
-    restart: unless-stopped
 
   config-server:
     restart: unless-stopped

@@ -1,0 +1,63 @@
+databaseChangeLog:
+  logicalFilePath: db/changelog/db.changelog-master
+  
+  # Extensiones de PostgreSQL
+  - include:
+      file: db/changelog/00_extensions/001_create_extension_uuid_ossp.yaml
+      relativeToChangelogFile: true
+
+  # Tablas principales
+  - include:
+      file: db/changelog/01_tables/001_create_table_products.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: db/changelog/01_tables/002_create_table_categories.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: db/changelog/01_tables/003_create_table_product_categories.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: db/changelog/01_tables/004_create_table_product_inventory.yaml
+      relativeToChangelogFile: true
+
+  # Vistas
+  - include:
+      file: db/changelog/02_views/001_create_view_product_details.yaml
+      relativeToChangelogFile: true
+
+  # Funciones
+  - include:
+      file: db/changelog/03_functions/001_create_function_update_product_timestamp.yaml
+      relativeToChangelogFile: true
+
+  # Procedimientos almacenados
+  - include:
+      file: db/changelog/04_procedures/001_create_procedure_get_products_by_category.yaml
+      relativeToChangelogFile: true
+
+  # Triggers
+  - include:
+      file: db/changelog/05_triggers/001_create_trigger_product_updated_at.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: db/changelog/05_triggers/002_create_trigger_inventory_update.yaml
+      relativeToChangelogFile: true
+
+  # Índices
+  - include:
+      file: db/changelog/06_indexes/001_create_indexes_product.yaml
+      relativeToChangelogFile: true
+
+  # Datos iniciales
+  - include:
+      file: db/changelog/09_inserts/001_insert_categories.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: db/changelog/09_inserts/002_insert_products.yaml
+      relativeToChangelogFile: true
+
+  # Rollbacks (reversiones)
+  - include:
+      file: db/changelog/11_rollbacks/001_rollback_procedures.yaml
+      relativeToChangelogFile: true
+

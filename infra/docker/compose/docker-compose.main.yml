@@ -1,11 +1,4 @@
 services:
-  mongodb:
-    ports: []
-    restart: always
-
-  postgresql:
-    ports: []
-    restart: always
 
   config-server:
     restart: always

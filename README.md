@@ -2,6 +2,12 @@
 
 Repositorio de microservicios con soporte multiambiente (dev, qa, release, main) y documentación centralizada en `docs/`.
 
+## Inicio rapido recomendado (Docker)
+
+1. Abre `docs/README.docker.md`.
+2. Sigue el flujo de `dev` (setup -> up -> smoke test).
+3. Cuando `dev` funcione, pasa a `qa` y `release`.
+
 ## Estructura principal
 
 - `docs/`: documentación funcional y técnica (fuente canónica)
@@ -13,9 +19,9 @@ Repositorio de microservicios con soporte multiambiente (dev, qa, release, main)
 
 ## Documentación recomendada para empezar
 
-1. `docs/INDEX.md`
-2. `docs/SETUP_AND_DEPLOYMENT.md`
-3. `docs/QUICK_REFERENCE.md`
+1. `docs/README.docker.md` (arranque en Docker paso a paso)
+2. `docs/postman/README.md` (coleccion + environments)
+3. `docs/INDEX.md` (indice general)
 
 ## Comandos frecuentes
 

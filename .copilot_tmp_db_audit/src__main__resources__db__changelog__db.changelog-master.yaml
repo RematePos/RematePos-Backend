@@ -1,0 +1,57 @@
+databaseChangeLog:
+  # Extensions
+  - include:
+      file: 00_extensions/001_create_extension_uuid_ossp.yaml
+  
+  # Tables
+  - include:
+      file: 01_tables/001_create_table_products.yaml
+  - include:
+      file: 01_tables/002_create_table_categories.yaml
+  - include:
+      file: 01_tables/003_create_table_product_categories.yaml
+  
+  # Views
+  # - include:
+  #     file: 02_views/001_create_view_name.yaml
+  
+  # Functions
+  # - include:
+  #     file: 03_functions/001_create_function_name.yaml
+  
+  # Procedures
+  # - include:
+  #     file: 04_procedures/001_create_procedure_name.yaml
+  
+  # Triggers
+  # - include:
+  #     file: 05_triggers/001_create_trigger_name.yaml
+  
+  # Indexes
+  # - include:
+  #     file: 06_indexes/001_create_index_name.yaml
+  
+  # Materialized Views
+  # - include:
+  #     file: 07_materialized_views/001_create_materialized_view_name.yaml
+  
+  # Types
+  # - include:
+  #     file: 08_types/001_create_type_name.yaml
+  
+  # Inserts/Seeds
+  - include:
+      file: 09_inserts/001_seed_categories.yaml
+  
+  # Updates
+  # - include:
+  #     file: 10_updates/001_update_data_name.yaml
+  
+  # Schema
+  # - include:
+  #     file: 11_schema/001_schema_name.yaml
+  
+  # Rollbacks (if needed)
+  # - include:
+  #     file: 12_rollbacks/001_rollback_name.yaml
+

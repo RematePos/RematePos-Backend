@@ -1,0 +1,11 @@
+﻿customer-microservice-1  | 
+customer-microservice-1  |   .   ____          _            __ _ _
+customer-microservice-1  |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+customer-microservice-1  | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+customer-microservice-1  |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+customer-microservice-1  |   '  |____| .__|_| |_|_| |_\__, | / / / /
+customer-microservice-1  |  =========|_|==============|___/=/_/_/_/
+customer-microservice-1  | 
+customer-microservice-1  |  :: Spring Boot ::                (v4.0.3)
+customer-microservice-1  | 
+customer-microservice-1  | 2026-04-08 20:48:32 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.

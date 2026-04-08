@@ -1,0 +1,71 @@
+services:
+  postgresql:
+    image: postgres:15-alpine
+    container_name: rematepos-postgresql
+    ports:
+      - "${POSTGRESQL_DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRESQL_DB_PASSWORD}
+      POSTGRES_DB: ${PRODUCT_DB_NAME:-product_db}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRESQL_DB_USERNAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  mongodb:
+    image: mongo:7
+    container_name: rematepos-mongodb
+    ports:
+      - "${MONGO_DB_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_PASSWORD:-admin123}
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet -u ${MONGO_DB_USERNAME:-admin} -p ${MONGO_DB_PASSWORD:-admin123} --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 }).ok' | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  liquibase:
+    image: liquibase/liquibase:4.31
+    container_name: rematepos-liquibase
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    volumes:
+      - ../:/workspace
+    working_dir: /workspace
+    command:
+      - --defaultsFile=/workspace/liquibase-properties
+      - update
+    environment:
+      POSTGRESQL_HOST: postgresql
+      PRODUCT_DB_NAME: ${PRODUCT_DB_NAME:-product_db}
+      POSTGRESQL_DB_USERNAME: ${POSTGRESQL_DB_USERNAME:-postgres}
+      POSTGRESQL_DB_PASSWORD: ${POSTGRESQL_DB_PASSWORD}
+    restart: "no"
+  mongo-migrate:
+    image: mongo:7
+    container_name: rematepos-mongo-migrate
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ../mongo:/migrations:ro
+    working_dir: /migrations
+    entrypoint: ["sh", "/migrations/run-migrations.sh"]
+    environment:
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_DB_USERNAME: ${MONGO_DB_USERNAME:-admin}
+      MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD:-admin123}
+      MIGRATION_DB: ${MONGO_MIGRATION_DB:-db_migrations}
+    restart: "no"
+volumes:
+  postgresql_data:
+  mongodb_data:

@@ -1,0 +1,1 @@
+﻿    <sqlFile path="../08_types/08_types.sql" relativeToChangelogFile="true" splitStatements="false"/>

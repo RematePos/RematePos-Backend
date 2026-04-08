@@ -1,57 +1,33 @@
-# Docker Multi-Environment Runbook
+# Docker Multiambiente - Guia de Arranque Rapido
 
-This project uses one compose base file plus one override per environment.
+Esta guia deja un flujo unico para levantar el proyecto en Docker desde Windows/PowerShell.
 
-- `infra/docker/compose/docker-compose.yml` (base)
-- `infra/docker/compose/docker-compose.dev.yml`
-- `infra/docker/compose/docker-compose.qa.yml`
-- `infra/docker/compose/docker-compose.release.yml`
-- `infra/docker/compose/docker-compose.main.yml`
+## Que archivos usa Docker
 
-## Quick validation status
+- Base: `infra/docker/compose/docker-compose.yml`
+- Override por ambiente:
+  - `infra/docker/compose/docker-compose.dev.yml`
+  - `infra/docker/compose/docker-compose.qa.yml`
+  - `infra/docker/compose/docker-compose.release.yml`
+  - `infra/docker/compose/docker-compose.main.yml`
 
-I validated the compose syntax with `docker compose config` for all environments.
+## Prerrequisitos
 
-- `dev:0`
-- `qa:0`
-- `release:0`
-- `main:0`
+- Docker Desktop encendido.
+- `docker compose` v2 disponible.
+- Puertos libres para el ambiente que vas a usar.
+- MongoDB y PostgreSQL levantados por separado (repositorio `RematePos-db`).
+- Recomendado: levantar un ambiente a la vez (primero `dev`).
 
-`0` means the compose file set is valid for that environment.
+## Nota sobre base de datos externa
 
-## Files to share in Git
+Este backend ya no levanta `mongodb`/`postgresql` en su `docker-compose`.
+Debes iniciar primero el stack de BD externo y configurar:
 
-Share these files so another developer can run all environments directly:
+- `MONGO_HOST`
+- `POSTGRESQL_HOST`
 
-- `infra/docker/compose/docker-compose.yml`
-- `infra/docker/compose/docker-compose.dev.yml`
-- `infra/docker/compose/docker-compose.qa.yml`
-- `infra/docker/compose/docker-compose.release.yml`
-- `infra/docker/compose/docker-compose.main.yml`
-- `infra/docker/env/.env.example`
-- `infra/docker/env/.env.dev.example`
-- `infra/docker/env/.env.qa.example`
-- `infra/docker/env/.env.release.example`
-- `infra/docker/env/.env.main.example`
-- `docs/README.docker.md`
-
-## Security baseline (recommended for final semester deploy)
-
-- Commit only templates (`*.example`), never real `infra/docker/env/.env.*` files.
-- Keep real secrets local or in CI/CD secret variables.
-- Rotate any password that was ever committed in Git history.
-- Do not publish database ports in production (`main` already sets `ports: []` for DBs).
-- Prefer strong unique passwords per environment (`dev`, `qa`, `release`, `main`).
-
-If real env files were committed before, untrack them once:
-
-```powershell
-git rm --cached .env
-git rm --cached infra/docker/env/.env.dev infra/docker/env/.env.qa infra/docker/env/.env.release infra/docker/env/.env.main infra/docker/env/.env.local
-git commit -m "Stop tracking sensitive env files"
-```
-
-## Local setup for another developer
+## Setup inicial (solo una vez)
 
 ```powershell
 git clone <REPO_URL>
@@ -62,56 +38,122 @@ Copy-Item .\infra\docker\env\.env.release.example .\infra\docker\env\.env.releas
 Copy-Item .\infra\docker\env\.env.main.example .\infra\docker\env\.env.main
 ```
 
-Edit `infra/docker/env/.env.main` with real production credentials before using `main`.
-
-## Start environments from terminal (PowerShell)
+## Levantar ambiente `dev`
 
 ```powershell
 docker compose -p pos-dev --env-file .\infra\docker\env\.env.dev -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml up -d --build
+docker compose -p pos-dev --env-file .\infra\docker\env\.env.dev -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml ps
+```
+
+## Validacion minima (recomendada)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\smoke-endpoints.ps1 -Environment dev
+```
+
+Notas de validacion:
+
+- `customer` y `product` deben responder `200`.
+- `cart` puede responder `404` en este momento (esperado por el script).
+- Si el script falla, revisa la seccion de troubleshooting.
+
+## Puertos y endpoints por ambiente
+
+| Ambiente | Config Server | Eureka | Customer API | Product API |
+|---|---:|---:|---:|---:|
+| `dev` | `8888` | `8761` | `8091` | `8092` |
+| `qa` | `18888` | `18761` | `18091` | `18092` |
+| `release` | `28888` | `28761` | `28091` | `28092` |
+| `main` | `38888` | `38761` | `38091` | `38092` |
+
+Health checks utiles:
+
+- `http://localhost:<config-port>/actuator/health`
+- `http://localhost:<eureka-port>/actuator/health`
+
+APIs base:
+
+- `http://localhost:<customer-port>/api/v1/customers`
+- `http://localhost:<product-port>/api/v1/products`
+
+Para pruebas en Postman usa `docs/postman/microservice-pos-4-env.postman_collection.json` y el environment del ambiente correspondiente.
+
+## Levantar otros ambientes
+
+`qa`:
+
+```powershell
 docker compose -p pos-qa --env-file .\infra\docker\env\.env.qa -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.qa.yml up -d --build
+```
+
+`release`:
+
+```powershell
 docker compose -p pos-release --env-file .\infra\docker\env\.env.release -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.release.yml up -d --build
 ```
 
-Optional `main`:
+`main` (solo cuando tengas credenciales reales):
 
 ```powershell
 docker compose -p pos-main --env-file .\infra\docker\env\.env.main -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.main.yml up -d --build
 ```
 
-## Stop environments
+Recomendaciones para `main`:
+
+- Usa `MONGO_HOST` y `POSTGRESQL_HOST` con DNS/IP de infraestructura real (no `host.docker.internal`).
+- Usa credenciales de secret manager.
+- Mantiene puertos de BD en `27017` y `5432` salvo requisito explícito de red.
+
+## Apagado limpio
 
 ```powershell
 docker compose -p pos-dev --env-file .\infra\docker\env\.env.dev -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml down
-docker compose -p pos-qa --env-file .\infra\docker\env\.env.qa -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.qa.yml down
-docker compose -p pos-release --env-file .\infra\docker\env\.env.release -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.release.yml down
 ```
 
-## Verify running containers
+Repite cambiando `pos-dev` y el archivo `.env` segun el ambiente.
+
+## Troubleshooting rapido
+
+### Error: `Bind for 0.0.0.0:5433 failed: port is already allocated`
+
+Ese puerto ya lo esta usando otro proceso o contenedor de la BD externa.
+
+1) Ver quien usa el puerto:
 
 ```powershell
-docker ps
+Get-NetTCPConnection -LocalPort 5433 -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess
 ```
 
-Expected host ports per environment:
+2) Ver el proceso:
 
-- `dev`: `8888`, `8761`, `8091`, `8092`, `8093`
-- `qa`: `18888`, `18761`, `18091`, `18092`, `18093`
-- `release`: `28888`, `28761`, `28091`, `28092`, `28093`
+```powershell
+Get-Process -Id <PID>
+```
 
-## Run with Portainer (no terminal after initial setup)
+3) Liberar el puerto (si aplica):
 
-1. Open Portainer and select environment `local`.
-2. Go to `Stacks` -> `Add stack`.
-3. Name stack `pos-dev` (then `pos-qa`, `pos-release`).
-4. In `Stack file content`, paste `infra/docker/compose/docker-compose.yml`.
-5. In `Environment variables`, switch to advanced mode and paste variables from:
-   - `infra/docker/env/.env.dev` for `pos-dev`
-   - `infra/docker/env/.env.qa` for `pos-qa`
-   - `infra/docker/env/.env.release` for `pos-release`
-6. Click `Deploy the stack`.
+```powershell
+Stop-Process -Id <PID> -Force
+```
 
-## Notes
+4) Alternativa segura: cambiar `POSTGRESQL_DB_PORT` en `infra/docker/env/.env.dev` a otro puerto libre (por ejemplo `5533`) y volver a levantar.
 
-- This is Docker Compose multi-environment, not Kubernetes.
-- Service-to-service communication uses internal container ports (`8888`, `8761`, `27017`, `5432`).
-- `main` hides DB host ports via `ports: []` in `infra/docker/compose/docker-compose.main.yml`.
+### `docker compose ps` sale vacio
+
+- Normalmente significa que `up` fallo antes de crear/arrancar servicios.
+- Ejecuta de nuevo `up` y revisa el primer error que aparezca.
+
+### Smoke test falla en customer/product
+
+- Revisa logs:
+
+```powershell
+docker compose -p pos-dev --env-file .\infra\docker\env\.env.dev -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml logs --tail 100 customer-microservice
+docker compose -p pos-dev --env-file .\infra\docker\env\.env.dev -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml logs --tail 100 product-microservice
+```
+
+## Seguridad
+
+- Versiona solo plantillas `*.example`, nunca `infra/docker/env/.env.*` reales.
+- Mantiene secretos en variables de CI/CD o locales.
+- En `main`, el backend se conecta a MongoDB/PostgreSQL externos definidos por `MONGO_HOST` y `POSTGRESQL_HOST`.

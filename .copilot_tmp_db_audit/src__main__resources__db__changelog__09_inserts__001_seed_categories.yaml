@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-categories
+      author: system
+      comment: Insertar categorías iniciales
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  value: '550e8400-e29b-41d4-a716-446655440000'
+              - column:
+                  name: name
+                  value: 'Electrónica'
+              - column:
+                  name: description
+                  value: 'Productos electrónicos en general'
+              - column:
+                  name: status
+                  value: 'ACTIVE'
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  value: '550e8400-e29b-41d4-a716-446655440001'
+              - column:
+                  name: name
+                  value: 'Ropa'
+              - column:
+                  name: description
+                  value: 'Prendas de vestir'
+              - column:
+                  name: status
+                  value: 'ACTIVE'
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  value: '550e8400-e29b-41d4-a716-446655440002'
+              - column:
+                  name: name
+                  value: 'Alimentos'
+              - column:
+                  name: description
+                  value: 'Productos alimenticios'
+              - column:
+                  name: status
+                  value: 'ACTIVE'
+      rollback:
+        - delete:
+            tableName: categories
+            where: name IN ('Electrónica', 'Ropa', 'Alimentos')
+

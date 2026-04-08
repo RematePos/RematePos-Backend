@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-categories
+      author: system
+      comment: Seed initial product categories
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Electrónica
+              - column:
+                  name: description
+                  value: Productos electrónicos en general
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Ropa
+              - column:
+                  name: description
+                  value: Prendas de vestir
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Alimentos
+              - column:
+                  name: description
+                  value: Productos alimenticios
+      rollback:
+        - delete:
+            tableName: categories
+            where: name IN ('Electrónica', 'Ropa', 'Alimentos')
+

@@ -11,7 +11,7 @@
 
 	<artifactId>product-microservice</artifactId>
 	<name>product-microservice</name>
-	<description></description>
+	<description/>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

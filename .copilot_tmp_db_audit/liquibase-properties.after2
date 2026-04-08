@@ -1,0 +1,6 @@
+changeLogFile=src/main/resources/db/changelog/db.changelog-master.yaml
+url=jdbc:postgresql://postgresql:5432/product_db
+username=postgres
+password=postgres123
+driver=org.postgresql.Driver
+logLevel=info

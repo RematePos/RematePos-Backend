@@ -1,0 +1,120 @@
+﻿product-microservice-1  | Caused by: org.postgresql.util.PSQLException: FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:778)
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:234)
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:289)
+product-microservice-1  | 	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:57)
+product-microservice-1  | 	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+product-microservice-1  | 	at org.postgresql.Driver.makeConnection(Driver.java:448)
+product-microservice-1  | 	at org.postgresql.Driver.connect(Driver.java:298)
+product-microservice-1  | 	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+product-microservice-1  | 	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+product-microservice-1  | 	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:48)
+product-microservice-1  | 	... 42 common frames omitted
+product-microservice-1  | 2026-04-08 20:48:33 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+product-microservice-1  | 2026-04-08 20:48:33 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+product-microservice-1  | 	Database JDBC URL [undefined/unknown]
+product-microservice-1  | 	Database driver: undefined/unknown
+product-microservice-1  | 	Database dialect: PostgreSQLDialect
+product-microservice-1  | 	Database version: 13.0
+product-microservice-1  | 	Default catalog/schema: unknown/unknown
+product-microservice-1  | 	Autocommit mode: undefined/unknown
+product-microservice-1  | 	Isolation level: NONE [default NONE]
+product-microservice-1  | 	JDBC fetch size: undefined/unknown
+product-microservice-1  | 	Pool: DataSourceConnectionProvider
+product-microservice-1  | 	Minimum pool size: undefined/unknown
+product-microservice-1  | 	Maximum pool size: undefined/unknown
+product-microservice-1  | 2026-04-08 20:48:35 [main] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+product-microservice-1  | 2026-04-08 20:48:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+product-microservice-1  | 2026-04-08 20:48:36 [main] WARN  org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 0, SQLState: 28P01
+product-microservice-1  | 2026-04-08 20:48:36 [main] WARN  org.hibernate.orm.jdbc.error - FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜
+product-microservice-1  | 2026-04-08 20:48:36 [main] ERROR o.s.o.j.LocalContainerEntityManagerFactoryBean - Failed to initialize JPA EntityManagerFactory: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.AuthException: Unable to open JDBC Connection for DDL execution [FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜] [n/a]
+product-microservice-1  | 2026-04-08 20:48:36 [main] WARN  o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.AuthException: Unable to open JDBC Connection for DDL execution [FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜] [n/a]
+product-microservice-1  | 2026-04-08 20:48:36 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+product-microservice-1  | 2026-04-08 20:48:36 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+product-microservice-1  | 
+product-microservice-1  | Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+product-microservice-1  | 2026-04-08 20:48:36 [main] ERROR o.s.boot.SpringApplication - Application run failed
+product-microservice-1  | org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.AuthException: Unable to open JDBC Connection for DDL execution [FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜] [n/a]
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1817)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+product-microservice-1  | 	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+product-microservice-1  | 	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+product-microservice-1  | 	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+product-microservice-1  | 	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+product-microservice-1  | 	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+product-microservice-1  | 	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+product-microservice-1  | 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+product-microservice-1  | 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+product-microservice-1  | 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+product-microservice-1  | 	at com.corhuila.microservices.product_microservice.ProductMicroserviceApplication.main(ProductMicroserviceApplication.java:10)
+product-microservice-1  | 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+product-microservice-1  | 	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+product-microservice-1  | 	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:106)
+product-microservice-1  | 	at org.springframework.boot.loader.launch.Launcher.launch(Launcher.java:64)
+product-microservice-1  | 	at org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40)
+product-microservice-1  | Caused by: jakarta.persistence.PersistenceException: Unable to build Hibernate SessionFactory  [persistence unit: default] ; nested exception is org.hibernate.exception.AuthException: Unable to open JDBC Connection for DDL execution [FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜] [n/a]
+product-microservice-1  | 	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:448)
+product-microservice-1  | 	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+product-microservice-1  | 	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1864)
+product-microservice-1  | 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1813)
+product-microservice-1  | 	... 20 common frames omitted
+product-microservice-1  | Caused by: org.hibernate.exception.AuthException: Unable to open JDBC Connection for DDL execution [FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜] [n/a]
+product-microservice-1  | 	at org.hibernate.exception.internal.SQLStateConversionDelegate.convert(SQLStateConversionDelegate.java:87)
+product-microservice-1  | 	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:34)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:115)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+product-microservice-1  | 	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:71)
+product-microservice-1  | 	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:37)
+product-microservice-1  | 	at org.hibernate.tool.schema.internal.exec.ImprovedExtractionContextImpl.getJdbcConnection(ImprovedExtractionContextImpl.java:61)
+product-microservice-1  | 	at org.hibernate.tool.schema.extract.spi.ExtractionContext.getQueryResults(ExtractionContext.java:41)
+product-microservice-1  | 	at org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorLegacyImpl.extractMetadata(SequenceInformationExtractorLegacyImpl.java:36)
+product-microservice-1  | 	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.initializeSequences(DatabaseInformationImpl.java:73)
+product-microservice-1  | 	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.<init>(DatabaseInformationImpl.java:63)
+product-microservice-1  | 	at org.hibernate.tool.schema.extract.internal.CachingDatabaseInformationImpl.<init>(CachingDatabaseInformationImpl.java:43)
+product-microservice-1  | 	at org.hibernate.tool.schema.internal.GroupedSchemaMigratorImpl.buildDatabaseInformation(GroupedSchemaMigratorImpl.java:112)
+product-microservice-1  | 	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:83)
+product-microservice-1  | 	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:269)
+product-microservice-1  | 	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$1(SchemaManagementToolCoordinator.java:101)
+product-microservice-1  | 	at java.base/java.util.HashMap.forEach(Unknown Source)
+product-microservice-1  | 	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:100)
+product-microservice-1  | 	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:35)
+product-microservice-1  | 	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:33)
+product-microservice-1  | 	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:323)
+product-microservice-1  | 	at org.hibernate.internal.SessionFactoryRegistry.instantiateSessionFactory(SessionFactoryRegistry.java:64)
+product-microservice-1  | 	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:437)
+product-microservice-1  | 	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1456)
+product-microservice-1  | 	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+product-microservice-1  | 	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+product-microservice-1  | 	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+product-microservice-1  | 	... 24 common frames omitted
+product-microservice-1  | Caused by: org.postgresql.util.PSQLException: FATAL: la autentificaci∩┐╜n password fall∩┐╜ para el usuario ∩┐╜postgres∩┐╜
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:778)
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:234)
+product-microservice-1  | 	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:289)
+product-microservice-1  | 	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:57)
+product-microservice-1  | 	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+product-microservice-1  | 	at org.postgresql.Driver.makeConnection(Driver.java:448)
+product-microservice-1  | 	at org.postgresql.Driver.connect(Driver.java:298)
+product-microservice-1  | 	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+product-microservice-1  | 	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+product-microservice-1  | 	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+product-microservice-1  | 	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+product-microservice-1  | 	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:44)
+product-microservice-1  | 	... 46 common frames omitted

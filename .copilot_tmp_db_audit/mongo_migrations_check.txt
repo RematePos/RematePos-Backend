@@ -1,0 +1,4 @@
+﻿[
+  { _id: '001_create_customer_indexes.js' },
+  { _id: '002_create_cart_indexes.js' }
+]

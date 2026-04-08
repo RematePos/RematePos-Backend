@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <changeSet id="00-extensions" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../00_extensions/00_extensions.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="01-tables" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../01_tables/01_core_tables.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="08-types" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../08_types/08_types.sql" relativeToChangelogFile="true" splitStatements="false"/>
+  </changeSet>
+  <changeSet id="11-schema" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../11_schema/11_schema.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="02-views" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../02_views/02_views.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="03-functions" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../03_functions/03_functions.sql" relativeToChangelogFile="true" splitStatements="false"/>
+  </changeSet>
+  <changeSet id="05-triggers" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../05_triggers/05_triggers.sql" relativeToChangelogFile="true" splitStatements="false"/>
+  </changeSet>
+  <changeSet id="06-indexes" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../06_indexes/06_indexes.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="07-materialized-views" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../07_materialized_views/07_materialized_views.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="04-procedures" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../04_procedures/04_procedures.sql" relativeToChangelogFile="true" splitStatements="false"/>
+  </changeSet>
+  <changeSet id="09-inserts" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../09_inserts/09_inserts.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="10-updates" author="rematepos-db" dbms="postgresql">
+    <sqlFile path="../10_updates/10_updates.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+  <changeSet id="12-rollbacks" author="rematepos-db" dbms="postgresql" context="manual-rollback">
+    <sqlFile path="../12_rollbacks/12_rollbacks.sql" relativeToChangelogFile="true"/>
+  </changeSet>
+</databaseChangeLog>
+
+
+

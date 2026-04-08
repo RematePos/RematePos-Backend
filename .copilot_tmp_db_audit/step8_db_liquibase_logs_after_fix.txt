@@ -1,0 +1,120 @@
+﻿rematepos-liquibase  | 	at com.datical.liquibase.ext.command.InternalRollbackOnErrorCommandStep.executeCommand(InternalRollbackOnErrorCommandStep.java:319)
+rematepos-liquibase  | 	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:62)
+rematepos-liquibase  | 	at liquibase.command.CommandScope.lambda$execute$6(CommandScope.java:253)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:186)
+rematepos-liquibase  | 	at liquibase.command.CommandScope.execute(CommandScope.java:241)
+rematepos-liquibase  | 	at liquibase.integration.commandline.CommandRunner.call(CommandRunner.java:51)
+rematepos-liquibase  | 	at liquibase.integration.commandline.CommandRunner.call(CommandRunner.java:21)
+rematepos-liquibase  | 	at picocli.CommandLine.executeUserObject(CommandLine.java:2045)
+rematepos-liquibase  | 	at picocli.CommandLine.access$1500(CommandLine.java:148)
+rematepos-liquibase  | 	at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2465)
+rematepos-liquibase  | 	at picocli.CommandLine$RunLast.handle(CommandLine.java:2457)
+rematepos-liquibase  | 	at picocli.CommandLine$RunLast.handle(CommandLine.java:2419)
+rematepos-liquibase  | 	at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2277)
+rematepos-liquibase  | 	at picocli.CommandLine$RunLast.execute(CommandLine.java:2421)
+rematepos-liquibase  | 	at picocli.CommandLine.execute(CommandLine.java:2174)
+rematepos-liquibase  | 	at liquibase.integration.commandline.LiquibaseCommandLine.lambda$execute$2(LiquibaseCommandLine.java:414)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:186)
+rematepos-liquibase  | 	at liquibase.integration.commandline.LiquibaseCommandLine.lambda$execute$3(LiquibaseCommandLine.java:389)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:186)
+rematepos-liquibase  | 	at liquibase.integration.commandline.LiquibaseCommandLine.execute(LiquibaseCommandLine.java:386)
+rematepos-liquibase  | 	at liquibase.integration.commandline.LiquibaseCommandLine.main(LiquibaseCommandLine.java:103)
+rematepos-liquibase  | 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+rematepos-liquibase  | 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+rematepos-liquibase  | 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+rematepos-liquibase  | 	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+rematepos-liquibase  | 	at liquibase.integration.commandline.LiquibaseLauncher.main(LiquibaseLauncher.java:121)
+rematepos-liquibase  | Caused by: liquibase.exception.LiquibaseException: liquibase.exception.MigrationFailedException: Migration failed for changeset driver/db.changelog-master.xml::08-types::rematepos-db:
+rematepos-liquibase  |      Reason: liquibase.exception.DatabaseException: Unterminated dollar quote started at position 3 in SQL DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF. Expected terminating $$ [Failed SQL: (0) DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF]
+rematepos-liquibase  | 	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:155)
+rematepos-liquibase  | 	at liquibase.command.core.AbstractUpdateCommandStep.lambda$run$0(AbstractUpdateCommandStep.java:114)
+rematepos-liquibase  | 	at liquibase.Scope.lambda$child$0(Scope.java:201)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:200)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:179)
+rematepos-liquibase  | 	at liquibase.command.core.AbstractUpdateCommandStep.run(AbstractUpdateCommandStep.java:112)
+rematepos-liquibase  | 	at liquibase.command.core.UpdateCommandStep.run(UpdateCommandStep.java:100)
+rematepos-liquibase  | 	at com.datical.liquibase.ext.command.ProUpdateCommandStep.run(ProUpdateCommandStep.java:46)
+rematepos-liquibase  | 	... 27 more
+rematepos-liquibase  | Caused by: liquibase.exception.MigrationFailedException: Migration failed for changeset driver/db.changelog-master.xml::08-types::rematepos-db:
+rematepos-liquibase  |      Reason: liquibase.exception.DatabaseException: Unterminated dollar quote started at position 3 in SQL DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF. Expected terminating $$ [Failed SQL: (0) DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF]
+rematepos-liquibase  | 	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:840)
+rematepos-liquibase  | 	at liquibase.changelog.visitor.UpdateVisitor.executeAcceptedChange(UpdateVisitor.java:126)
+rematepos-liquibase  | 	at liquibase.changelog.visitor.UpdateVisitor.visit(UpdateVisitor.java:70)
+rematepos-liquibase  | 	at liquibase.changelog.ChangeLogIterator.lambda$run$0(ChangeLogIterator.java:133)
+rematepos-liquibase  | 	at liquibase.Scope.lambda$child$0(Scope.java:201)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:200)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:179)
+rematepos-liquibase  | 	at liquibase.changelog.ChangeLogIterator.lambda$run$1(ChangeLogIterator.java:122)
+rematepos-liquibase  | 	at liquibase.Scope.lambda$child$0(Scope.java:201)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:210)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:200)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:179)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:267)
+rematepos-liquibase  | 	at liquibase.Scope.child(Scope.java:271)
+rematepos-liquibase  | 	at liquibase.changelog.ChangeLogIterator.run(ChangeLogIterator.java:91)
+rematepos-liquibase  | 	... 35 more
+rematepos-liquibase  | Caused by: liquibase.exception.DatabaseException: Unterminated dollar quote started at position 3 in SQL DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF. Expected terminating $$ [Failed SQL: (0) DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF]
+rematepos-liquibase  | 	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:497)
+rematepos-liquibase  | 	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:83)
+rematepos-liquibase  | 	at liquibase.executor.jvm.JdbcExecutor.execute(JdbcExecutor.java:185)
+rematepos-liquibase  | 	at liquibase.executor.AbstractExecutor.execute(AbstractExecutor.java:141)
+rematepos-liquibase  | 	at liquibase.database.AbstractJdbcDatabase.executeStatements(AbstractJdbcDatabase.java:1189)
+rematepos-liquibase  | 	at liquibase.changelog.ChangeSet.execute(ChangeSet.java:790)
+rematepos-liquibase  | 	... 50 more
+rematepos-liquibase  | Caused by: org.postgresql.util.PSQLException: Unterminated dollar quote started at position 3 in SQL DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF. Expected terminating $$
+rematepos-liquibase  | 	at org.postgresql.core.Parser.checkParsePosition(Parser.java:1435)
+rematepos-liquibase  | 	at org.postgresql.core.Parser.parseSql(Parser.java:1334)
+rematepos-liquibase  | 	at org.postgresql.core.Parser.replaceProcessing(Parser.java:1286)
+rematepos-liquibase  | 	at org.postgresql.core.CachedQueryCreateAction.create(CachedQueryCreateAction.java:43)
+rematepos-liquibase  | 	at org.postgresql.core.QueryExecutorBase.createQueryByKey(QueryExecutorBase.java:370)
+rematepos-liquibase  | 	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:333)
+rematepos-liquibase  | 	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:317)
+rematepos-liquibase  | 	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:312)
+rematepos-liquibase  | 	at liquibase.executor.jvm.JdbcExecutor$ExecuteStatementCallback.doInStatement(JdbcExecutor.java:491)
+rematepos-liquibase  | 	... 55 more
+rematepos-liquibase  | 
+rematepos-liquibase  | 
+rematepos-liquibase  | Unexpected error running Liquibase: Migration failed for changeset driver/db.changelog-master.xml::08-types::rematepos-db:
+rematepos-liquibase  |      Reason: liquibase.exception.DatabaseException: Unterminated dollar quote started at position 3 in SQL DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF. Expected terminating $$ [Failed SQL: (0) DO $$
+rematepos-liquibase  | BEGIN
+rematepos-liquibase  |   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'product_status') THEN
+rematepos-liquibase  | 	CREATE TYPE product_status AS ENUM ('ACTIVE', 'INACTIVE', 'DISCONTINUED');
+rematepos-liquibase  |   END IF]
+rematepos-liquibase  | 

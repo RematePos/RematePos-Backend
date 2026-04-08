@@ -116,23 +116,83 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/customer-microservice:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy-qa:
+  deploy-dev:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-    
+    environment:
+      name: dev
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to QA
+      - name: Create dev environment file
+        run: |
+          cp infra/docker/env/.env.dev.example infra/docker/env/.env.dev
+          if [ -n "$DEV_MONGO_DB_PASSWORD" ]; then
+            echo "MONGO_DB_PASSWORD=${DEV_MONGO_DB_PASSWORD}" >> infra/docker/env/.env.dev
+          fi
+          if [ -n "$DEV_POSTGRESQL_DB_PASSWORD" ]; then
+            echo "POSTGRESQL_DB_PASSWORD=${DEV_POSTGRESQL_DB_PASSWORD}" >> infra/docker/env/.env.dev
+          fi
         env:
-          QA_DEPLOY_TOKEN: ${{ secrets.QA_DEPLOY_TOKEN }}
+          DEV_MONGO_DB_PASSWORD: ${{ secrets.DEV_MONGO_DB_PASSWORD }}
+          DEV_POSTGRESQL_DB_PASSWORD: ${{ secrets.DEV_POSTGRESQL_DB_PASSWORD }}
+
+      - name: Deploy to Dev
+        run: |
+          echo "====== DEPLOYING TO DEV ======"
+          docker compose -p pos-dev \
+            -f infra/docker/compose/docker-compose.yml \
+            -f infra/docker/compose/docker-compose.dev.yml \
+            --env-file infra/docker/env/.env.dev \
+            up -d --build
+          # Wait for Spring Boot services to finish startup before smoke testing
+          sleep 15
+          bash scripts/smoke-endpoints.sh dev || (echo "Dev smoke tests failed" && exit 1)
+          echo "✅ Deployment to Dev completed"
+
+  deploy-qa:
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    environment:
+      name: qa
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create qa environment file
+        run: |
+          cp infra/docker/env/.env.qa.example infra/docker/env/.env.qa
+          if [ -n "$QA_MONGO_DB_PASSWORD" ]; then
+            echo "MONGO_DB_PASSWORD=${QA_MONGO_DB_PASSWORD}" >> infra/docker/env/.env.qa
+          fi
+          if [ -n "$QA_POSTGRESQL_DB_PASSWORD" ]; then
+            echo "POSTGRESQL_DB_PASSWORD=${QA_POSTGRESQL_DB_PASSWORD}" >> infra/docker/env/.env.qa
+          fi
+        env:
+          QA_MONGO_DB_PASSWORD: ${{ secrets.QA_MONGO_DB_PASSWORD }}
+          QA_POSTGRESQL_DB_PASSWORD: ${{ secrets.QA_POSTGRESQL_DB_PASSWORD }}
+
+      - name: Deploy to QA
         run: |
           echo "====== DEPLOYING TO QA ======"
-          # Add your deployment script here
-          # Example: kubectl set image deployment/customer-microservice customer-microservice=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/customer-microservice:${{ github.sha }}
-          echo "âœ… Deployment to QA completed"
+          docker compose -p pos-qa \
+            -f infra/docker/compose/docker-compose.yml \
+            -f infra/docker/compose/docker-compose.qa.yml \
+            --env-file infra/docker/env/.env.qa \
+            up -d --build
+          # Wait for Spring Boot services to finish startup before smoke testing
+          sleep 15
+          bash scripts/smoke-endpoints.sh qa || (echo "QA smoke tests failed" && exit 1)
+          echo "✅ Deployment to QA completed"
 
   deploy-release:
     needs: build

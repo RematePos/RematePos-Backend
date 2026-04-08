@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgresql:5432/product_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_DB_PORT:5432}/product_db}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver

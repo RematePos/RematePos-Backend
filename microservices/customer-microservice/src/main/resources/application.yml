@@ -4,6 +4,11 @@ spring:
   config:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}
 
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET:VGhpc0lzQURlbW9TZWNyZXRLZXlGb3JKT1RUb2tlblZhbGlkYXRpb25SZXBsYWNlSW5Qcm9k}
+    expiration-seconds: ${SECURITY_JWT_EXPIRATION_SECONDS:3600}
+
 
 
 

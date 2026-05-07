@@ -76,6 +76,43 @@ Reasons:
 - Did not force push.
 - Did not modify microservice business logic.
 
+## Secret Rotation Recommendations
+
+The team must rotate any credentials that may have appeared in the affected files or logs.
+
+Recommended rotation scope:
+
+- PostgreSQL credentials for local, DEV, QA, MAIN, and RELEASE if reused.
+- MongoDB credentials for local, DEV, QA, MAIN, and RELEASE if reused.
+- Any `SPRING_DATASOURCE_PASSWORD` value that was copied into audit snapshots or logs.
+- Any CI/CD secret whose value was copied locally into environment files before commit.
+
+If the affected values were placeholders only, document that conclusion in the PR discussion before merging.
+
+## Future History Cleanup Recommendation
+
+Because the affected files are already present in Git history, the correct long-term cleanup is a coordinated history rewrite.
+
+Recommended tools:
+
+- `git filter-repo`
+- BFG Repo-Cleaner
+
+Example approach, not executed in HU-096:
+
+```bash
+git filter-repo --path .copilot_tmp_db_audit --invert-paths
+```
+
+After a history rewrite, the team would need to coordinate:
+
+- forced update of remote branches and tags;
+- local reclone or careful resynchronization for all developers;
+- validation that open PRs are not broken;
+- confirmation that all rotated credentials are active.
+
+Do not execute a force push without explicit team approval.
+
 ## Related Pull Requests Detected
 
 - RematePos-Backend PR #3: merged platform maturity PR that previously included generated/log artifacts.
@@ -87,6 +124,8 @@ Reasons:
 ## Pending Actions
 
 - Review whether the historical credential-looking values were real or placeholders.
+- Rotate any credential that may have been real.
 - Merge this HU-096 branch only after review.
+- Plan a separate approved task for Git history cleanup.
 - Do not delete local troubleshooting files until the team confirms they are no longer needed.
 - Do not force push without explicit approval from the team.

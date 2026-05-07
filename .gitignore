@@ -35,17 +35,28 @@ build/
 *.log
 logs/
 **/logs/
+hs_err_pid*.log
 
 # OS / temp artifacts
 .DS_Store
 Thumbs.db
 tmp/
 **/tmp/
+*.tmp
+*.dump
+*.backup
+*.bak
+*.zip
+*.rar
 
 # Ignore runtime reports generated during local troubleshooting
 /tmp/docker-checks/
 
 # Ignore sensitive environment files
+.env
+.env.*
+!.env.example
+!**/.env.example
 /infra/docker/env/.env.local
 /infra/docker/env/.env
 /infra/docker/env/.env.*
@@ -57,3 +68,6 @@ tmp/
 /infra/docker/env/.env.main
 /infra/docker/env/.env.qa
 /infra/docker/env/.env.release
+
+# Local audit artifacts must never be versioned
+.copilot_tmp_db_audit/

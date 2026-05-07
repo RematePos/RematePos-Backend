@@ -1,6 +1,7 @@
 package com.corhuila.microservices.customer_microservice.customer.validation;
 
 import com.corhuila.microservices.customer_microservice.customer.dto.CustomerRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CustomerRequestValidationTest {
@@ -27,25 +29,51 @@ class CustomerRequestValidationTest {
     }
 
     @Test
-    void shouldAcceptAliasAndValidNumberForCc() {
+    void shouldAcceptValidCustomerRequest() {
         var violations = validator.validate(baseRequest("cedula de ciudadania", "123456789"));
         assertTrue(violations.isEmpty());
     }
 
     @Test
-    void shouldRejectUnknownDocumentType() {
-        var violations = validator.validate(baseRequest("RUT", "123456789"));
-        assertTrue(violations.stream().anyMatch(v -> "documentType".equals(v.getPropertyPath().toString())));
+    void shouldRequireFirstNameLastNameAndEmail() {
+        var request = new CustomerRequest(
+                null,
+                "CC",
+                "123456789",
+                "",
+                "",
+                "",
+                "3001234567",
+                "Calle 1",
+                "Neiva"
+        );
+
+        var violations = validator.validate(request);
+
+        assertTrue(hasViolation(violations, "firstName"));
+        assertTrue(hasViolation(violations, "lastName"));
+        assertTrue(hasViolation(violations, "email"));
     }
 
     @Test
-    void shouldRejectInvalidNumberForPassport() {
-        var violations = validator.validate(baseRequest("PAS", "12-ABC"));
-        assertTrue(violations.stream().anyMatch(v -> "documentNumber".equals(v.getPropertyPath().toString())));
+    void shouldRejectInvalidEmail() {
+        var violations = validator.validate(new CustomerRequest(
+                null,
+                "CC",
+                "123456789",
+                "Carlo",
+                "Diaz",
+                "invalid-email",
+                "3001234567",
+                "Calle 1",
+                "Neiva"
+        ));
+
+        assertTrue(hasViolation(violations, "email"));
     }
 
     @Test
-    void shouldRequirePhoneAddressAndCity() {
+    void shouldAllowOptionalContactFields() {
         var request = new CustomerRequest(
                 null,
                 "CC",
@@ -60,9 +88,9 @@ class CustomerRequestValidationTest {
 
         var violations = validator.validate(request);
 
-        assertTrue(violations.stream().anyMatch(v -> "phone".equals(v.getPropertyPath().toString())));
-        assertTrue(violations.stream().anyMatch(v -> "address".equals(v.getPropertyPath().toString())));
-        assertTrue(violations.stream().anyMatch(v -> "city".equals(v.getPropertyPath().toString())));
+        assertFalse(hasViolation(violations, "phone"));
+        assertFalse(hasViolation(violations, "address"));
+        assertFalse(hasViolation(violations, "city"));
     }
 
     private CustomerRequest baseRequest(String documentType, String documentNumber) {
@@ -77,6 +105,15 @@ class CustomerRequestValidationTest {
                 "Calle 1",
                 "Neiva"
         );
+    }
+
+    private boolean hasViolation(Iterable<? extends ConstraintViolation<?>> violations, String propertyName) {
+        for (var violation : violations) {
+            if (propertyName.equals(violation.getPropertyPath().toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

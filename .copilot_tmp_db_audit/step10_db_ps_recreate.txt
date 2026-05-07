@@ -1,4 +1,0 @@
-﻿NAME                   IMAGE                      COMMAND                  SERVICE      CREATED          STATUS                    PORTS
-rematepos-liquibase    liquibase/liquibase:4.31   "/liquibase/docker-eΓÇª"   liquibase    12 seconds ago   Up Less than a second     
-rematepos-mongodb      mongo:7                    "docker-entrypoint.sΓÇª"   mongodb      12 seconds ago   Up 11 seconds             0.0.0.0:27018->27017/tcp, [::]:27018->27017/tcp
-rematepos-postgresql   postgres:15-alpine         "docker-entrypoint.sΓÇª"   postgresql   12 seconds ago   Up 11 seconds (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp

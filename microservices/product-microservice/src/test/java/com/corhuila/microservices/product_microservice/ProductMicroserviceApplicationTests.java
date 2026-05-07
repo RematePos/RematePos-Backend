@@ -5,7 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(properties = {
 		"spring.cloud.config.enabled=false",
-		"spring.jpa.hibernate.ddl-auto=validate"
+		"eureka.client.enabled=false",
+		"spring.jpa.hibernate.ddl-auto=create-drop"
 })
 class ProductMicroserviceApplicationTests {
 

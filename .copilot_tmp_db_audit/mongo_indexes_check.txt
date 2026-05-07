@@ -1,1 +1,0 @@
-﻿[ '_id_', 'uq_customer_document', 'uq_customer_email' ]

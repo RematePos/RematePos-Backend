@@ -1,3 +1,0 @@
-﻿NAME                   IMAGE                COMMAND                  SERVICE      CREATED              STATUS                        PORTS
-rematepos-mongodb      mongo:7              "docker-entrypoint.sΓÇª"   mongodb      About a minute ago   Up About a minute             0.0.0.0:27018->27017/tcp, [::]:27018->27017/tcp
-rematepos-postgresql   postgres:15-alpine   "docker-entrypoint.sΓÇª"   postgresql   About a minute ago   Up About a minute (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp

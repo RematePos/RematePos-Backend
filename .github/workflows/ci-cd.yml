@@ -66,7 +66,7 @@ jobs:
         if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL || secrets.SONAR_HOST_URL }}
         run: |
           echo "====== SONAR ANALYSIS ======"
           ./microservices/customer-microservice/mvnw -f microservices/pom.xml sonar:sonar \
@@ -76,7 +76,7 @@ jobs:
             -Dsonar.tests=src/test/java \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
             -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.token=$SONAR_TOKEN \
             -Dsonar.qualitygate.wait=true
 
       - name: Upload coverage to Codecov

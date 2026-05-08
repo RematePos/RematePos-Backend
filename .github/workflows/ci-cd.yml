@@ -120,13 +120,21 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
 
+      - name: Normalize Docker image namespace
+        if: github.event_name == 'push'
+        id: image-vars
+        run: |
+          IMAGE_NAMESPACE=$(echo "${REGISTRY}/${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "image_namespace=$IMAGE_NAMESPACE" >> "$GITHUB_OUTPUT"
+          echo "Resolved image namespace: $IMAGE_NAMESPACE"
+
       - name: Build and push Docker images
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
           context: microservices/customer-microservice
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/customer-microservice:${{ github.sha }}
+          tags: ${{ steps.image-vars.outputs.image_namespace }}/customer-microservice:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy-qa:

@@ -14,7 +14,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -108,12 +107,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize Docker image namespace
+        if: github.event_name == 'push'
+        id: image-vars
+        run: |
+          IMAGE_NAMESPACE=$(echo "${REGISTRY}/${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "image_namespace=$IMAGE_NAMESPACE" >> "$GITHUB_OUTPUT"
+          echo "Resolved image namespace: $IMAGE_NAMESPACE"
+
       - name: Extract metadata
         if: github.event_name == 'push'
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ steps.image-vars.outputs.image_namespace }}/customer-microservice
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
@@ -126,7 +133,7 @@ jobs:
         with:
           context: microservices/customer-microservice
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/customer-microservice:${{ github.sha }}
+          tags: ${{ steps.image-vars.outputs.image_namespace }}/customer-microservice:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy-qa:
@@ -144,7 +151,7 @@ jobs:
         run: |
           echo "====== DEPLOYING TO QA ======"
           # Add your deployment script here
-          # Example: kubectl set image deployment/customer-microservice customer-microservice=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/customer-microservice:${{ github.sha }}
+          # Example: kubectl set image deployment/customer-microservice customer-microservice=ghcr.io/rematepos/rematepos-backend/customer-microservice:${{ github.sha }}
           echo "âœ… Deployment to QA completed"
 
   deploy-release:

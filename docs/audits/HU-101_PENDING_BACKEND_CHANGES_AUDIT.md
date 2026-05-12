@@ -67,3 +67,37 @@ The objective is to avoid mixing unrelated user stories and to separate pending 
 - Backups
 - Zip/rar packages
 - Root `package.json` until purpose and ownership are confirmed
+
+## 7. Recommended Work Order
+
+Recommended execution order for separation and implementation:
+
+1. HU-082
+2. HU-083
+3. HU-075
+4. HU-061
+5. HU-062
+6. HU-063
+7. HU-064
+8. HU-065
+9. HU-078
+10. HU-066
+
+This order prioritizes environment and infrastructure baseline before payment flow, invoice flow, returns, and final documentation.
+
+## 8. Rules to Separate Changes Safely
+
+- One HU per branch.
+- Use conventional commits in English.
+- Do not mix multiple microservices in one commit unless strictly required by contract coupling.
+- Do not commit generated artifacts (`target/**`, logs, temporary files).
+- Do not work directly on dirty `develop` for feature separation.
+- Use clean worktrees from `origin/develop` for each HU separation branch.
+
+## 9. Pending Security and Manual Review Items
+
+- Confirm if temporary `api-gateway` content belongs in this repository or should be isolated.
+- Review all new and modified `application.yml` and config files for accidental credentials.
+- Confirm ownership and intent of root `package.json` before any commit.
+- Validate Docker and environment examples do not expose real endpoints, tokens, or passwords.
+- Execute per-HU test validation before integration to avoid regressions after split.

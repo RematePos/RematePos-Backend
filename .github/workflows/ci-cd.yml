@@ -131,7 +131,8 @@ jobs:
         if: github.event_name == 'push'
         uses: docker/build-push-action@v5
         with:
-          context: microservices/customer-microservice
+          context: .
+          file: microservices/customer-microservice/Dockerfile
           push: true
           tags: ${{ steps.image-vars.outputs.image_namespace }}/customer-microservice:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}

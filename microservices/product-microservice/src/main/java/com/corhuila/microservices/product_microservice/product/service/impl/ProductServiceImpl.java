@@ -72,13 +72,15 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = repository.findById(request.id())
                 .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(request.id())));
 
-        Product updatedProduct = mapper.toProduct(request);
+        existingProduct.setName(request.name());
+        existingProduct.setDescription(request.description());
+        existingProduct.setPrice(request.price());
+        existingProduct.setStock(request.stock() == null ? 0 : request.stock());
+        existingProduct.setImageUrl(request.imageUrl());
+        existingProduct.setCategory(mapper.toProduct(request).getCategory());
 
-        // Ensure we do not overwrite stock
-        updatedProduct.setStock(existingProduct.getStock());
-
-        repository.save(updatedProduct);
-        return updatedProduct.getId();
+        repository.save(existingProduct);
+        return existingProduct.getId();
     }
 
     public void deleteProduct(Integer id) {

@@ -37,4 +37,13 @@ public class CategoryMapper {
                         .toList()
         );
     }
+
+    public CategoryResponse toCategorySummaryResponse(Category category) {
+        return new CategoryResponse(
+                category.getId(),
+                category.getName(),
+                category.getDescription(),
+                java.util.List.of()
+        );
+    }
 }

@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRESQL_HOST:host.docker.internal}:${POSTGRESQL_DB_PORT:5432}/${PURCHASE_DB_NAME:purchase_db}}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRESQL_DB_USERNAME:change_me_pg_user}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRESQL_DB_PASSWORD:change_me_pg_password}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+services:
+  customer:
+    url: ${CUSTOMER_SERVICE_URL:http://customer-microservice:8091}
+  product:
+    url: ${PRODUCT_SERVICE_URL:http://product-microservice:8092}
+  invoice:
+    url: ${INVOICE_SERVICE_URL:http://invoice-microservice:8095}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+
+logging:
+  level:
+    root: INFO
+    com.corhuila.microservices: WARN
+
+server:
+  port: 8094
+

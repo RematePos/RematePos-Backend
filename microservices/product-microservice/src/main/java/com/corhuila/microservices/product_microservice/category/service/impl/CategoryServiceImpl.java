@@ -9,6 +9,9 @@ import com.corhuila.microservices.product_microservice.category.repository.Categ
 import com.corhuila.microservices.product_microservice.category.service.CategoryService;
 import com.corhuila.microservices.product_microservice.exceptions.CategoryException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -24,8 +27,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryResponse> getAllCategories() {
         return repository.findAll().stream()
-                .map(mapper::toCategoryResponse)
+                .map(mapper::toCategorySummaryResponse)
                 .toList();
+    }
+
+    @Override
+    public Page<CategoryResponse> getCategoriesPage(int page, int size, String search) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        var pageable = PageRequest.of(safePage, safeSize, Sort.by("name").ascending());
+
+        Page<Category> result = StringUtils.hasText(search)
+                ? repository.findByNameContainingIgnoreCase(search.trim(), pageable)
+                : repository.findAll(pageable);
+
+        return result.map(mapper::toCategorySummaryResponse);
     }
 
     @Override

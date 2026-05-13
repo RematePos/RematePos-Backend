@@ -48,8 +48,8 @@ The backend Docker stack and the database Docker stack run in different Compose 
 ## Files Changed
 
 - `infra/docker/compose/docker-compose.yml`
+- `infra/docker/compose/docker-compose.dev.yml`
 - `infra/docker/env/.env.dev.example`
-- `infra/docker/env/.env.example`
 - `infra/docker/compose/.env.example`
 
 ## Configuration Fix
@@ -57,12 +57,16 @@ The backend Docker stack and the database Docker stack run in different Compose 
 The backend Docker Compose configuration now:
 
 - Uses `mongodb` as the default Mongo host in DEV templates.
-- Adds an external database network reference named `database`.
+- Keeps the base Docker Compose file independent from the DEV-only database network.
+- Adds the external database network reference named `database` only in `docker-compose.dev.yml`.
+- Uses `DATABASE_NETWORK_NAME=pos-db-dev_default` as the DEV network template value.
 - Connects `customer-microservice` and `cart-microservice` to both:
   - the backend `microservices` network;
   - the database network `pos-db-dev_default`.
 
 This allows Mongo-based backend services to resolve the database container by service name while preserving the internal backend service network used by the API Gateway and Eureka.
+
+The DEV-only network configuration is intentionally kept outside the base Compose file so QA, release and main environments can continue using their own external database hosts without requiring `pos-db-dev_default`.
 
 ## Commands Executed
 

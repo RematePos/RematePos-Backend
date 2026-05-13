@@ -21,8 +21,20 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public String saveCustomer(CustomerRequest request) {
-            var customer = repository.save(mapper.toCustomer(request));
-            return customer.getId();
+        var customer = mapper.toCustomer(request);
+        customer.setDocumentType(normalizeDocumentType(customer.getDocumentType()));
+        customer.setDocumentNumber(normalizeDocumentNumber(customer.getDocumentNumber()));
+
+        if (isBlank(customer.getId()) && !isBlank(customer.getDocumentType()) && !isBlank(customer.getDocumentNumber())) {
+            repository
+                    .findFirstByDocumentTypeAndDocumentNumberOrderByIdDesc(
+                            customer.getDocumentType(),
+                            customer.getDocumentNumber())
+                    .ifPresent(existingCustomer -> customer.setId(existingCustomer.getId()));
+        }
+
+        var savedCustomer = repository.save(customer);
+        return savedCustomer.getId();
     }
 
     @Override
@@ -37,11 +49,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponse getCustomerByDocument(String documentType, String documentNumber) {
+        var normalizedDocumentType = normalizeDocumentType(documentType);
+        var normalizedDocumentNumber = normalizeDocumentNumber(documentNumber);
+
         return repository
-                .findByDocumentTypeAndDocumentNumber(documentType, documentNumber)
+                .findFirstByDocumentTypeAndDocumentNumberOrderByIdDesc(normalizedDocumentType, normalizedDocumentNumber)
                 .map(mapper::toCustomerResponse)
                 .orElseThrow(() -> new CustomerNotFoundException(
-                        String.format("Customer with document %s-%s not found", documentType, documentNumber)
+                        String.format("Customer with document %s-%s not found", normalizedDocumentType, normalizedDocumentNumber)
                 ));
     }
 
@@ -62,5 +77,16 @@ public class CustomerServiceImpl implements CustomerService {
         repository.deleteById(customerId);
     }
 
-}
+    private String normalizeDocumentType(String documentType) {
+        return documentType == null ? null : documentType.trim().toUpperCase();
+    }
 
+    private String normalizeDocumentNumber(String documentNumber) {
+        return documentNumber == null ? null : documentNumber.trim();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+}

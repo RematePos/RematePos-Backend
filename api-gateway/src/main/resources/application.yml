@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://config-server:8888}
+
+server:
+  port: 8080
+
+services:
+  customer:
+    url: ${CUSTOMER_SERVICE_URL:http://customer-microservice:8091}
+  product:
+    url: ${PRODUCT_SERVICE_URL:http://product-microservice:8092}
+  cart:
+    url: ${CART_SERVICE_URL:http://cart-microservice:8093}
+  purchase:
+    url: ${PURCHASE_SERVICE_URL:http://purchase-microservice:8094}
+  invoice:
+    url: ${INVOICE_SERVICE_URL:http://invoice-microservice:8095}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}

@@ -107,6 +107,79 @@ The baseline must not include:
 
 Only example environment templates are allowed.
 
+## GitHub Traceability
+
+PR URL:
+
+```text
+https://github.com/RematePos/RematePos-Backend/pull/15
+```
+
+Branch:
+
+```text
+feature/HU-120-CAVY-functional-backend-baseline
+```
+
+PR status:
+
+```text
+Draft, open, base develop, no merge.
+```
+
+Commits:
+
+- `feat(HU-120): add validated purchase microservice baseline`
+- `feat(HU-120): add validated invoice microservice baseline`
+- `chore(HU-120): include backend compose services for validated baseline`
+- `docs(HU-120): add local execution evidence and functional baseline notes`
+
+## Validation Executed
+
+Maven reactor validation:
+
+```text
+BUILD SUCCESS
+```
+
+Command:
+
+```powershell
+.\microservices\customer-microservice\mvnw.cmd -f microservices\pom.xml clean test
+```
+
+Reactor modules validated:
+
+```text
+7 modules, including purchase-microservice and invoice-microservice.
+```
+
+Docker Compose configuration validation:
+
+```text
+OK
+```
+
+Command:
+
+```powershell
+docker compose -p pos-dev-hu120 --env-file .\infra\docker\env\.env.dev.example -f .\infra\docker\compose\docker-compose.yml -f .\infra\docker\compose\docker-compose.dev.yml config --quiet
+```
+
+Security validation:
+
+- No real `.env` files committed.
+- No secrets committed.
+- No target folders committed.
+- No logs committed.
+- No dumps, backups, zips, jars or generated artifacts committed.
+
+## Academic Review Note
+
+This PR is intentionally kept as Draft because it preserves a broad validated functional backend baseline. It is useful for academic and technical review, but it should not be merged automatically before the team decides whether to keep this baseline or split it into smaller user stories.
+
+This baseline supports traceability for the evaluator because it links the working local evidence, GitHub PR, commits, validation commands, and future decomposition plan.
+
 ## Pending Risks
 
 - The backend baseline is broader than a single small HU and should be reviewed as a preservation branch.

@@ -9,7 +9,7 @@ services:
     environment:
       - MONGO_DB_USERNAME=${MONGO_DB_USERNAME:-admin}
       - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD:-example_mongo_password}
-      - MONGO_HOST=${MONGO_HOST:-host.docker.internal}
+      - MONGO_HOST=${MONGO_HOST:-mongodb}
       - MONGO_DB_PORT=${MONGO_DB_PORT:-27017}
       - POSTGRESQL_HOST=${POSTGRESQL_HOST:-host.docker.internal}
       - POSTGRESQL_DB_PORT=${POSTGRESQL_DB_PORT:-5433}
@@ -89,9 +89,10 @@ services:
     environment:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_MONGODB_URI=${CUSTOMER_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-host.docker.internal}:${MONGO_DB_PORT:-27017}/${CUSTOMER_DB_NAME:-customer_db}?authSource=admin}
+      - SPRING_MONGODB_URI=${CUSTOMER_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-mongodb}:${MONGO_DB_PORT:-27017}/${CUSTOMER_DB_NAME:-customer_db}?authSource=admin}
     networks:
       - microservices
+      - database
 
   product-microservice:
     build:
@@ -127,9 +128,10 @@ services:
     environment:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_MONGODB_URI=${CART_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-host.docker.internal}:${MONGO_DB_PORT:-27017}/${CART_DB_NAME:-cart_db}?authSource=admin}
+      - SPRING_MONGODB_URI=${CART_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-mongodb}:${MONGO_DB_PORT:-27017}/${CART_DB_NAME:-cart_db}?authSource=admin}
     networks:
       - microservices
+      - database
 
   purchase-microservice:
     build:
@@ -183,3 +185,6 @@ services:
 networks:
   microservices:
     driver: bridge
+  database:
+    external: true
+    name: ${DATABASE_NETWORK:-pos-db-dev_default}

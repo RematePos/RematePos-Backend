@@ -7,14 +7,14 @@ services:
     ports:
       - "${CONFIG_SERVER_PORT}:8888"
     environment:
-      - MONGO_DB_USERNAME=${MONGO_DB_USERNAME:-change_me_mongo_user}
-      - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD:-change_me_mongo_password}
-      - MONGO_HOST=${MONGO_HOST:-localhost}
+      - MONGO_DB_USERNAME=${MONGO_DB_USERNAME:-admin}
+      - MONGO_DB_PASSWORD=${MONGO_DB_PASSWORD:-example_mongo_password}
+      - MONGO_HOST=${MONGO_HOST:-host.docker.internal}
       - MONGO_DB_PORT=${MONGO_DB_PORT:-27017}
-      - POSTGRESQL_HOST=${POSTGRESQL_HOST:-localhost}
-      - POSTGRESQL_DB_PORT=${POSTGRESQL_DB_PORT:-5432}
-      - POSTGRESQL_DB_USERNAME=${POSTGRESQL_DB_USERNAME:-change_me_pg_user}
-      - POSTGRESQL_DB_PASSWORD=${POSTGRESQL_DB_PASSWORD:-change_me_pg_password}
+      - POSTGRESQL_HOST=${POSTGRESQL_HOST:-host.docker.internal}
+      - POSTGRESQL_DB_PORT=${POSTGRESQL_DB_PORT:-5433}
+      - POSTGRESQL_DB_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
+      - POSTGRESQL_DB_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
       - CUSTOMER_DB_NAME=${CUSTOMER_DB_NAME:-customer_db}
       - CART_DB_NAME=${CART_DB_NAME:-cart_db}
       - PRODUCT_DB_NAME=${PRODUCT_DB_NAME:-product_db}
@@ -89,7 +89,7 @@ services:
     environment:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_MONGODB_URI=${CUSTOMER_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-change_me_mongo_user}:${MONGO_DB_PASSWORD:-change_me_mongo_password}@${MONGO_HOST:-localhost}:${MONGO_DB_PORT:-27017}/${CUSTOMER_DB_NAME:-customer_db}?authSource=admin}
+      - SPRING_MONGODB_URI=${CUSTOMER_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-host.docker.internal}:${MONGO_DB_PORT:-27017}/${CUSTOMER_DB_NAME:-customer_db}?authSource=admin}
     networks:
       - microservices
 
@@ -106,8 +106,8 @@ services:
       - "${PRODUCT_MICROSERVICE_PORT}:8092"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${PRODUCT_DB_NAME}
-      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-change_me_pg_user}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-change_me_pg_password}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:
@@ -127,7 +127,7 @@ services:
     environment:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_MONGODB_URI=${CART_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-change_me_mongo_user}:${MONGO_DB_PASSWORD:-change_me_mongo_password}@${MONGO_HOST:-localhost}:${MONGO_DB_PORT:-27017}/${CART_DB_NAME:-cart_db}?authSource=admin}
+      - SPRING_MONGODB_URI=${CART_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-host.docker.internal}:${MONGO_DB_PORT:-27017}/${CART_DB_NAME:-cart_db}?authSource=admin}
     networks:
       - microservices
 
@@ -148,8 +148,8 @@ services:
       - "${PURCHASE_MICROSERVICE_PORT}:8094"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${PURCHASE_DB_NAME}
-      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-change_me_pg_user}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-change_me_pg_password}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
       - CUSTOMER_SERVICE_URL=http://customer-microservice:8091
       - PRODUCT_SERVICE_URL=http://product-microservice:8092
       - INVOICE_SERVICE_URL=http://invoice-microservice:8095
@@ -171,8 +171,8 @@ services:
       - "${INVOICE_MICROSERVICE_PORT}:8095"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${INVOICE_DB_NAME}
-      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-change_me_pg_user}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-change_me_pg_password}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:

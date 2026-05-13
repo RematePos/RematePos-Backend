@@ -8,7 +8,9 @@ COPY microservices/pom.xml microservices/pom.xml
 COPY microservices/cart-microservice/pom.xml microservices/cart-microservice/pom.xml
 COPY microservices/common-exceptions/pom.xml microservices/common-exceptions/pom.xml
 COPY microservices/customer-microservice/pom.xml microservices/customer-microservice/pom.xml
+COPY microservices/invoice-microservice/pom.xml microservices/invoice-microservice/pom.xml
 COPY microservices/product-microservice/pom.xml microservices/product-microservice/pom.xml
+COPY microservices/purchase-microservice/pom.xml microservices/purchase-microservice/pom.xml
 
 COPY microservices/common-exceptions/src microservices/common-exceptions/src
 COPY microservices/customer-microservice/src microservices/customer-microservice/src

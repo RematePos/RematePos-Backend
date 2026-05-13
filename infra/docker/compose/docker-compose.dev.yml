@@ -7,6 +7,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
 
+  api-gateway:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
   customer-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
@@ -16,6 +20,14 @@ services:
       - SPRING_PROFILES_ACTIVE=docker,dev
 
   cart-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
+  purchase-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
+  invoice-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
 

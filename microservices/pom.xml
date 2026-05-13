@@ -19,6 +19,7 @@
         <module>common-exceptions</module>
         <module>product-microservice</module>
         <module>cart-microservice</module>
+        <module>purchase-microservice</module>
     </modules>
     <properties>
 

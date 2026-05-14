@@ -134,7 +134,7 @@ public class ApiGatewayApplication {
 
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
         response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,PATCH,DELETE,OPTIONS");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Authorization,Content-Type,Accept");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "1800");
     }

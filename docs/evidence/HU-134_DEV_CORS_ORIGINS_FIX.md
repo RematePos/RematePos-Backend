@@ -103,7 +103,7 @@ npm start
 All responses included:
 
 ```text
-Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS
+Access-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
 Access-Control-Allow-Headers: Authorization,Content-Type,Accept
 ```
 

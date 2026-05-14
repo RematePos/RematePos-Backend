@@ -14,6 +14,9 @@ services:
   customer-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
+    networks:
+      - microservices
+      - database
 
   product-microservice:
     environment:
@@ -22,6 +25,9 @@ services:
   cart-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
+    networks:
+      - microservices
+      - database
 
   purchase-microservice:
     environment:
@@ -30,4 +36,9 @@ services:
   invoice-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
+
+networks:
+  database:
+    external: true
+    name: ${DATABASE_NETWORK_NAME:-pos-db-dev_default}
 

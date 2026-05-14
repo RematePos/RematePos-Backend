@@ -14,7 +14,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.cloud.gateway.server.mvc.filter.AfterFilterFunctions.removeResponseHeader;
 import static org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions.uri;
@@ -24,12 +26,6 @@ import static org.springframework.web.servlet.function.RequestPredicates.path;
 
 @SpringBootApplication
 public class ApiGatewayApplication {
-
-    private static final Set<String> ALLOWED_ORIGINS = Set.of(
-            "http://localhost:3000",
-            "http://localhost:13000",
-            "http://localhost:33000"
-    );
 
     public static void main(String[] args) {
         SpringApplication.run(ApiGatewayApplication.class, args);
@@ -94,7 +90,11 @@ public class ApiGatewayApplication {
     }
 
     @Bean
-    OncePerRequestFilter corsFilter() {
+    OncePerRequestFilter corsFilter(
+            @Value("${cors.allowed-origins:http://localhost:3000}") String allowedOriginsProperty
+    ) {
+        Set<String> allowedOrigins = parseAllowedOrigins(allowedOriginsProperty);
+
         return new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(
@@ -102,7 +102,7 @@ public class ApiGatewayApplication {
                     HttpServletResponse response,
                     FilterChain filterChain
             ) throws ServletException, IOException {
-                applyCorsHeaders(request, response);
+                applyCorsHeaders(request, response, allowedOrigins);
 
                 if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -110,25 +110,32 @@ public class ApiGatewayApplication {
                 }
 
                 filterChain.doFilter(request, response);
-                applyCorsHeaders(request, response);
+                applyCorsHeaders(request, response, allowedOrigins);
             }
         };
     }
 
-    private void applyCorsHeaders(HttpServletRequest request, HttpServletResponse response) {
+    private Set<String> parseAllowedOrigins(String allowedOriginsProperty) {
+        return Arrays.stream(allowedOriginsProperty.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private void applyCorsHeaders(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Set<String> allowedOrigins
+    ) {
         String origin = request.getHeader(HttpHeaders.ORIGIN);
-        if (origin == null || !ALLOWED_ORIGINS.contains(origin)) {
+        if (origin == null || !allowedOrigins.contains(origin)) {
             return;
         }
 
-        String requestedHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
         response.setHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN);
-        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-        response.setHeader(
-                HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
-                requestedHeaders == null || requestedHeaders.isBlank() ? "*" : requestedHeaders
-        );
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,DELETE,OPTIONS");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Authorization,Content-Type,Accept");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "1800");
     }
 }

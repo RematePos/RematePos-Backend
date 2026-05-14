@@ -66,6 +66,7 @@ services:
       - CART_SERVICE_URL=http://cart-microservice:8093
       - PURCHASE_SERVICE_URL=http://purchase-microservice:8094
       - INVOICE_SERVICE_URL=http://invoice-microservice:8095
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
     networks:
       - microservices
     healthcheck:

@@ -1,4 +1,4 @@
-package com.corhuila.microservices.product_microservice.config;
+package com.corhuila.microservices.customer_microservice.config;
 
 import java.util.List;
 

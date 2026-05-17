@@ -1,5 +1,6 @@
 package com.corhuila.microservices.purchase_microservice.controller;
 
+import com.corhuila.microservices.purchase_microservice.security.PurchaseSecurityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +23,13 @@ public class PurchaseExceptionHandler {
     public ResponseEntity<Map<String, String>> handleNotFound(NoSuchElementException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
+    @ExceptionHandler(PurchaseSecurityException.class)
+    public ResponseEntity<Map<String, String>> handleSecurity(PurchaseSecurityException exception) {
+        return ResponseEntity
+                .status(exception.getStatus())
                 .body(Map.of("message", exception.getMessage()));
     }
 }

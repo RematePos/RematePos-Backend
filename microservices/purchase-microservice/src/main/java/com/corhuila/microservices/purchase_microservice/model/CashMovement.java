@@ -25,6 +25,8 @@ public class CashMovement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String tenantId;
+
     @Column(nullable = false)
     private Long cashSessionId;
 

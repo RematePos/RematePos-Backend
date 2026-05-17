@@ -8,14 +8,26 @@ import java.util.Optional;
 
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
+    Optional<Purchase> findByIdAndTenantId(Long id, String tenantId);
+
     List<Purchase> findByCustomerIdOrderByCreatedAtDesc(String customerId);
+
+    List<Purchase> findByCustomerIdAndTenantIdOrderByCreatedAtDesc(String customerId, String tenantId);
 
     List<Purchase> findByCustomerDocumentTypeAndCustomerDocumentNumberOrderByCreatedAtDesc(
             String customerDocumentType,
             String customerDocumentNumber
     );
 
+    List<Purchase> findByCustomerDocumentTypeAndCustomerDocumentNumberAndTenantIdOrderByCreatedAtDesc(
+            String customerDocumentType,
+            String customerDocumentNumber,
+            String tenantId
+    );
+
     Optional<Purchase> findByInvoiceNumber(String invoiceNumber);
+
+    Optional<Purchase> findByInvoiceNumberAndTenantId(String invoiceNumber, String tenantId);
 
     Optional<Purchase> findByPaymentReference(String paymentReference);
 }

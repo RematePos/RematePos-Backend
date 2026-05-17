@@ -33,6 +33,10 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             "X-Tenant-Id",
             "X-Tenant-Slug"
     );
+    private static final List<String> STRIPPED_INTERNAL_HEADER_NAMES = List.of(
+            "X-Internal-Service",
+            "X-Internal-Service-Token"
+    );
 
     private final JwtValidationService jwtValidationService;
     private final List<String> publicPaths;
@@ -117,6 +121,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
         @Override
         public String getHeader(String name) {
             if (isInternalHeader(name)) return internalHeaderValue(name);
+            if (isStrippedInternalHeader(name)) return null;
             return super.getHeader(name);
         }
 
@@ -125,6 +130,9 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             if (isInternalHeader(name)) {
                 String value = internalHeaderValue(name);
                 return Collections.enumeration(value == null ? List.of() : List.of(value));
+            }
+            if (isStrippedInternalHeader(name)) {
+                return Collections.emptyEnumeration();
             }
             return super.getHeaders(name);
         }
@@ -135,7 +143,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             Enumeration<String> originalNames = super.getHeaderNames();
             while (originalNames.hasMoreElements()) {
                 String name = originalNames.nextElement();
-                if (!isInternalHeader(name)) {
+                if (!isInternalHeader(name) && !isStrippedInternalHeader(name)) {
                     names.add(name);
                 }
             }
@@ -147,6 +155,10 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
 
         private boolean isInternalHeader(String name) {
             return name != null && INTERNAL_HEADER_NAMES.stream().anyMatch(header -> header.equalsIgnoreCase(name));
+        }
+
+        private boolean isStrippedInternalHeader(String name) {
+            return name != null && STRIPPED_INTERNAL_HEADER_NAMES.stream().anyMatch(header -> header.equalsIgnoreCase(name));
         }
 
         private String internalHeaderValue(String name) {

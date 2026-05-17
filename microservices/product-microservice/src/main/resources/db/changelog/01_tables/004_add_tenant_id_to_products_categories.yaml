@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-tenant-id-to-products-categories
+      author: system
+      changes:
+        - addColumn:
+            tableName: categories
+            columns:
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(64)
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(64)
+      rollback:
+        - dropColumn:
+            tableName: products
+            columnName: tenant_id
+        - dropColumn:
+            tableName: categories
+            columnName: tenant_id

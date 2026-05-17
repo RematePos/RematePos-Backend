@@ -29,6 +29,7 @@ public class Category {
     private Integer id;
     private String name;
     private String description;
+    private String tenantId;
     @OneToMany(mappedBy = "category" , fetch = FetchType.LAZY)
     private List<Product> products;
 }

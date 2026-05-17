@@ -6,6 +6,7 @@ RUN apk add --no-cache maven
 COPY pom.xml pom.xml
 COPY microservices/pom.xml microservices/pom.xml
 COPY microservices/cart-microservice/pom.xml microservices/cart-microservice/pom.xml
+COPY microservices/auth-microservice/pom.xml microservices/auth-microservice/pom.xml
 COPY microservices/common-exceptions/pom.xml microservices/common-exceptions/pom.xml
 COPY microservices/customer-microservice/pom.xml microservices/customer-microservice/pom.xml
 COPY microservices/invoice-microservice/pom.xml microservices/invoice-microservice/pom.xml

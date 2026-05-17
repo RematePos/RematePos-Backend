@@ -29,6 +29,10 @@ services:
       - microservices
       - database
 
+  auth-microservice:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
   purchase-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev

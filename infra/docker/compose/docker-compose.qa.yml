@@ -25,3 +25,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,qa
 
+  auth-microservice:
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,qa

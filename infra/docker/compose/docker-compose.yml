@@ -18,6 +18,13 @@ services:
       - CUSTOMER_DB_NAME=${CUSTOMER_DB_NAME:-customer_db}
       - CART_DB_NAME=${CART_DB_NAME:-cart_db}
       - PRODUCT_DB_NAME=${PRODUCT_DB_NAME:-product_db}
+      - AUTH_DB_NAME=${AUTH_DB_NAME:-auth_db}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-3600000}
+      - AUTH_DEMO_REGISTRATION_ENABLED=${AUTH_DEMO_REGISTRATION_ENABLED:-false}
+      - AUTH_SEED_DEMO_USERS=${AUTH_SEED_DEMO_USERS:-false}
+      - AUTH_DEMO_ADMIN_PASSWORD=${AUTH_DEMO_ADMIN_PASSWORD:-}
+      - AUTH_DEMO_CASHIER_PASSWORD=${AUTH_DEMO_CASHIER_PASSWORD:-}
     networks:
       - microservices
     healthcheck:
@@ -64,6 +71,7 @@ services:
       - CUSTOMER_SERVICE_URL=http://customer-microservice:8091
       - PRODUCT_SERVICE_URL=http://product-microservice:8092
       - CART_SERVICE_URL=http://cart-microservice:8093
+      - AUTH_SERVICE_URL=http://auth-microservice:8096
       - PURCHASE_SERVICE_URL=http://purchase-microservice:8094
       - INVOICE_SERVICE_URL=http://invoice-microservice:8095
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
@@ -129,6 +137,32 @@ services:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
       - SPRING_MONGODB_URI=${CART_MONGODB_URI:-mongodb://${MONGO_DB_USERNAME:-admin}:${MONGO_DB_PASSWORD:-example_mongo_password}@${MONGO_HOST:-host.docker.internal}:${MONGO_DB_PORT:-27017}/${CART_DB_NAME:-cart_db}?authSource=admin}
+    networks:
+      - microservices
+
+  auth-microservice:
+    build:
+      context: ../../..
+      dockerfile: microservices/auth-microservice/Dockerfile
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "${AUTH_MICROSERVICE_PORT}:8096"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${AUTH_DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-3600000}
+      - AUTH_DEMO_REGISTRATION_ENABLED=${AUTH_DEMO_REGISTRATION_ENABLED:-false}
+      - AUTH_SEED_DEMO_USERS=${AUTH_SEED_DEMO_USERS:-false}
+      - AUTH_DEMO_ADMIN_PASSWORD=${AUTH_DEMO_ADMIN_PASSWORD:-}
+      - AUTH_DEMO_CASHIER_PASSWORD=${AUTH_DEMO_CASHIER_PASSWORD:-}
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:
       - microservices
 

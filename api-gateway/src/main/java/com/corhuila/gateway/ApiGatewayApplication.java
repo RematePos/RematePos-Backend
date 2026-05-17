@@ -36,6 +36,7 @@ public class ApiGatewayApplication {
             @Value("${services.customer.url:http://customer-microservice:8091}") String customerUrl,
             @Value("${services.product.url:http://product-microservice:8092}") String productUrl,
             @Value("${services.cart.url:http://cart-microservice:8093}") String cartUrl,
+            @Value("${services.auth.url:http://auth-microservice:8096}") String authUrl,
             @Value("${services.purchase.url:http://purchase-microservice:8094}") String purchaseUrl,
             @Value("${services.invoice.url:http://invoice-microservice:8095}") String invoiceUrl
     ) {
@@ -66,6 +67,14 @@ public class ApiGatewayApplication {
                 .and(route("cart-route")
                         .route(path("/api/v1/carts/**"), http())
                         .before(uri(cartUrl))
+                        .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN))
+                        .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS))
+                        .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))
+                        .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS))
+                        .build())
+                .and(route("auth-route")
+                        .route(path("/api/v1/auth/**"), http())
+                        .before(uri(authUrl))
                         .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN))
                         .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS))
                         .after(removeResponseHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS))

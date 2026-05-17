@@ -27,9 +27,18 @@ import com.corhuila.microservices.purchase_microservice.repository.PurchaseRepos
 import com.corhuila.microservices.purchase_microservice.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.client.RestTemplate;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -51,6 +60,14 @@ public class PurchaseServiceImpl implements PurchaseService {
     private static final BigDecimal TAX_RATE = new BigDecimal("0.19");
     private static final String COP = "COP";
     private static final String SANDBOX_SIGNATURE = "rematepos-sandbox";
+    private static final List<String> INTERNAL_SECURITY_HEADERS = List.of(
+            "X-User-Id",
+            "X-Username",
+            "X-Roles",
+            "X-Permissions",
+            "X-Tenant-Id",
+            "X-Tenant-Slug"
+    );
 
     private final PurchaseRepository repository;
     private final CashMovementRepository cashMovementRepository;
@@ -248,7 +265,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         restTemplate.postForEntity(
                 productServiceUrl + "/api/v1/products/restock",
-                List.of(new ProductQuantityRequest(item.getProductId(), request.quantity())),
+                internalSecurityEntity(List.of(new ProductQuantityRequest(item.getProductId(), request.quantity()))),
                 Void.class
         );
 
@@ -381,7 +398,11 @@ public class PurchaseServiceImpl implements PurchaseService {
                 List<ProductQuantityRequest> stockDiscount = purchase.getItems().stream()
                         .map(item -> new ProductQuantityRequest(item.getProductId(), item.getQuantity()))
                         .toList();
-                restTemplate.postForEntity(productServiceUrl + "/api/v1/products/purchase", stockDiscount, Void.class);
+                restTemplate.postForEntity(
+                        productServiceUrl + "/api/v1/products/purchase",
+                        internalSecurityEntity(stockDiscount),
+                        Void.class
+                );
                 purchase.setInventoryDiscountedAt(Instant.now());
             }
 
@@ -457,17 +478,47 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     private ProductClientResponse getProduct(Integer productId) {
-        ProductClientResponse response = restTemplate.getForObject(
+        ResponseEntity<ProductClientResponse> responseEntity = restTemplate.exchange(
                 productServiceUrl + "/api/v1/products/{id}",
+                HttpMethod.GET,
+                internalSecurityEntity(),
                 ProductClientResponse.class,
                 productId
         );
+        ProductClientResponse response = responseEntity.getBody();
 
         if (response == null) {
             throw new NoSuchElementException("Product not found: " + productId);
         }
 
         return response;
+    }
+
+    private <T> HttpEntity<T> internalSecurityEntity(T body) {
+        HttpHeaders headers = internalSecurityHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(body, headers);
+    }
+
+    private HttpEntity<Void> internalSecurityEntity() {
+        return new HttpEntity<>(internalSecurityHeaders());
+    }
+
+    private HttpHeaders internalSecurityHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+
+        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+            HttpServletRequest request = attributes.getRequest();
+            INTERNAL_SECURITY_HEADERS.forEach(headerName -> {
+                String value = request.getHeader(headerName);
+                if (!isBlank(value)) {
+                    headers.set(headerName, value);
+                }
+            });
+        }
+
+        return headers;
     }
 
     private void validateElectronicMethod(PaymentMethod method) {

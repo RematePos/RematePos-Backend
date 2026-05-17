@@ -1,4 +1,4 @@
-package com.corhuila.microservices.product_microservice.security;
+package com.corhuila.microservices.invoice_microservice.security;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class SecurityContextHelper {
     public CurrentUserContext requireAuthenticated() {
         var context = currentUserContext();
         if (isBlank(context.userId()) || isBlank(context.username())) {
-            throw new ProductSecurityException(HttpStatus.UNAUTHORIZED, "Authentication is required");
+            throw new InvoiceSecurityException(HttpStatus.UNAUTHORIZED, "Authentication is required");
         }
         return context;
     }
@@ -41,36 +41,7 @@ public class SecurityContextHelper {
     public CurrentUserContext requireTenant() {
         var context = requireAuthenticated();
         if (isBlank(context.tenantId())) {
-            throw new ProductSecurityException(HttpStatus.FORBIDDEN, "Tenant context is required");
-        }
-        return context;
-    }
-
-    public CurrentUserContext requirePermission(String permission) {
-        var context = requireTenant();
-        if (!context.permissions().contains(permission)) {
-            throw new ProductSecurityException(HttpStatus.FORBIDDEN, "Required permission is missing");
-        }
-        return context;
-    }
-
-    public CurrentUserContext requirePermissionOrInternalService(String permission, String serviceName) {
-        if (isInternalServiceRequest(serviceName)) {
-            var context = currentUserContext();
-            if (isBlank(context.tenantId())) {
-                throw new ProductSecurityException(HttpStatus.FORBIDDEN, "Tenant context is required");
-            }
-            return context;
-        }
-        return requirePermission(permission);
-    }
-
-    public CurrentUserContext requireAnyPermission(String... permissions) {
-        var context = requireTenant();
-        var hasPermission = Arrays.stream(permissions)
-                .anyMatch(context.permissions()::contains);
-        if (!hasPermission) {
-            throw new ProductSecurityException(HttpStatus.FORBIDDEN, "Required permission is missing");
+            throw new InvoiceSecurityException(HttpStatus.FORBIDDEN, "Tenant context is required");
         }
         return context;
     }
@@ -79,8 +50,15 @@ public class SecurityContextHelper {
         return requireTenant().tenantId();
     }
 
-    public String getUserId() {
-        return requireAuthenticated().userId();
+    public String getTenantIdForInternalService(String serviceName) {
+        if (isInternalServiceRequest(serviceName)) {
+            var context = currentUserContext();
+            if (isBlank(context.tenantId())) {
+                throw new InvoiceSecurityException(HttpStatus.FORBIDDEN, "Tenant context is required");
+            }
+            return context.tenantId();
+        }
+        return getTenantId();
     }
 
     private boolean isInternalServiceRequest(String serviceName) {
@@ -90,10 +68,10 @@ public class SecurityContextHelper {
             return false;
         }
         if (isBlank(internalServiceToken) || INTERNAL_TOKEN_PLACEHOLDER.equals(internalServiceToken)) {
-            throw new ProductSecurityException(HttpStatus.UNAUTHORIZED, "Internal service authentication is not configured");
+            throw new InvoiceSecurityException(HttpStatus.UNAUTHORIZED, "Internal service authentication is not configured");
         }
         if (!internalServiceToken.equals(incomingToken)) {
-            throw new ProductSecurityException(HttpStatus.UNAUTHORIZED, "Invalid internal service authentication");
+            throw new InvoiceSecurityException(HttpStatus.UNAUTHORIZED, "Invalid internal service authentication");
         }
         return true;
     }

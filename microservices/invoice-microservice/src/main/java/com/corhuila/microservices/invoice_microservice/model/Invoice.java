@@ -19,6 +19,8 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String tenantId;
+
     @Column(nullable = false, unique = true)
     private Long purchaseId;
 

@@ -83,14 +83,14 @@ public class ProductController {
 
     @PostMapping("/purchase")
     public ResponseEntity<Void> purchaseProduct(@Valid @RequestBody List<ProductQuantityRequest> request) {
-        security.requirePermission("SALES_CREATE");
+        security.requirePermissionOrInternalService("SALES_CREATE", "purchase-microservice");
         service.purchaseProduct(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/restock")
     public ResponseEntity<Void> updateProductStock(@Valid @RequestBody List<ProductQuantityRequest> request) {
-        security.requirePermission("PRODUCTS_UPDATE");
+        security.requirePermissionOrInternalService("PRODUCTS_UPDATE", "purchase-microservice");
         service.restockProduct(request);
         return ResponseEntity.ok().build();
     }

@@ -118,6 +118,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${PRODUCT_DB_NAME}
       - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:
@@ -189,6 +190,7 @@ services:
       - CUSTOMER_SERVICE_URL=http://customer-microservice:8091
       - PRODUCT_SERVICE_URL=http://product-microservice:8092
       - INVOICE_SERVICE_URL=http://invoice-microservice:8095
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:
@@ -209,6 +211,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_DB_PORT}/${INVOICE_DB_NAME}
       - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
+      - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:

@@ -24,6 +24,7 @@ import com.corhuila.microservices.purchase_microservice.model.PurchaseItem;
 import com.corhuila.microservices.purchase_microservice.model.PurchaseStatus;
 import com.corhuila.microservices.purchase_microservice.repository.CashMovementRepository;
 import com.corhuila.microservices.purchase_microservice.repository.PurchaseRepository;
+import com.corhuila.microservices.purchase_microservice.security.SecurityContextHelper;
 import com.corhuila.microservices.purchase_microservice.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,10 +69,14 @@ public class PurchaseServiceImpl implements PurchaseService {
             "X-Tenant-Id",
             "X-Tenant-Slug"
     );
+    private static final String INTERNAL_SERVICE_HEADER = "X-Internal-Service";
+    private static final String INTERNAL_SERVICE_TOKEN_HEADER = "X-Internal-Service-Token";
+    private static final String PURCHASE_MICROSERVICE = "purchase-microservice";
 
     private final PurchaseRepository repository;
     private final CashMovementRepository cashMovementRepository;
     private final RestTemplate restTemplate;
+    private final SecurityContextHelper securityContextHelper;
 
     @Value("${services.customer.url:http://customer-microservice:8091}")
     private String customerServiceUrl;
@@ -85,9 +90,13 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Value("${payments.webhook.secret:rematepos-sandbox}")
     private String paymentWebhookSecret;
 
+    @Value("${internal.service.token:}")
+    private String internalServiceToken;
+
     @Override
     @Transactional
     public PurchaseResponse checkout(PurchaseCheckoutRequest request) {
+        String tenantId = securityContextHelper.getTenantId();
         CustomerClientResponse customer = getCustomerByDocument(request.documentType(), request.documentNumber());
 
         List<PurchaseItem> items = new ArrayList<>();
@@ -114,6 +123,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         BigDecimal total = subtotal.add(tax).setScale(2, RoundingMode.HALF_UP);
 
         Purchase purchase = new Purchase();
+        purchase.setTenantId(tenantId);
         purchase.setCustomerId(customer.id());
         purchase.setCustomerDocumentType(customer.documentType());
         purchase.setCustomerDocumentNumber(customer.documentNumber());
@@ -223,7 +233,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional
     public PurchaseResponse cancel(Long id) {
-        Purchase purchase = repository.findById(id)
+        String tenantId = securityContextHelper.getTenantId();
+        Purchase purchase = repository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new NoSuchElementException("Purchase not found"));
 
         if (isFinalized(purchase)) {
@@ -246,7 +257,8 @@ public class PurchaseServiceImpl implements PurchaseService {
             throw new IllegalArgumentException("Invoice number is required");
         }
 
-        Purchase purchase = repository.findByInvoiceNumber(invoiceNumber)
+        String tenantId = securityContextHelper.getTenantId();
+        Purchase purchase = repository.findByInvoiceNumberAndTenantId(invoiceNumber, tenantId)
                 .orElseThrow(() -> new NoSuchElementException("Invoice not found: " + invoiceNumber));
 
         PurchaseItem item = purchase.getItems().stream()
@@ -265,7 +277,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         restTemplate.postForEntity(
                 productServiceUrl + "/api/v1/products/restock",
-                internalSecurityEntity(List.of(new ProductQuantityRequest(item.getProductId(), request.quantity()))),
+                internalSecurityEntity(List.of(new ProductQuantityRequest(item.getProductId(), request.quantity())), purchase),
                 Void.class
         );
 
@@ -300,7 +312,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public PurchaseResponse getById(Long id) {
-        return repository.findById(id)
+        String tenantId = securityContextHelper.getTenantId();
+        return repository.findByIdAndTenantId(id, tenantId)
                 .map(this::toResponse)
                 .orElseThrow(() -> new NoSuchElementException("Purchase not found"));
     }
@@ -308,8 +321,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public PurchaseResponse getByInvoiceNumber(String invoiceNumber) {
+        String tenantId = securityContextHelper.getTenantId();
         String normalized = normalizeInvoiceNumber(invoiceNumber);
-        return repository.findByInvoiceNumber(normalized)
+        return repository.findByInvoiceNumberAndTenantId(normalized, tenantId)
                 .map(this::toResponse)
                 .orElseThrow(() -> new NoSuchElementException("Invoice not found: " + normalized));
     }
@@ -317,7 +331,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseResponse> getByCustomerId(String customerId) {
-        return repository.findByCustomerIdOrderByCreatedAtDesc(customerId)
+        String tenantId = securityContextHelper.getTenantId();
+        return repository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(customerId, tenantId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -326,14 +341,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseResponse> getByDocument(String documentType, String documentNumber) {
-        return repository.findByCustomerDocumentTypeAndCustomerDocumentNumberOrderByCreatedAtDesc(documentType, documentNumber)
+        String tenantId = securityContextHelper.getTenantId();
+        return repository.findByCustomerDocumentTypeAndCustomerDocumentNumberAndTenantIdOrderByCreatedAtDesc(documentType, documentNumber, tenantId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
     private Purchase getPurchaseForPayment(Long purchaseId) {
-        Purchase purchase = repository.findById(purchaseId)
+        String tenantId = securityContextHelper.getTenantId();
+        Purchase purchase = repository.findByIdAndTenantId(purchaseId, tenantId)
                 .orElseThrow(() -> new NoSuchElementException("Purchase not found"));
 
         if (isFinalized(purchase)) {
@@ -367,6 +384,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setPaymentEvidenceNote(firstNonBlank(request.evidenceNote(), "Pago en efectivo recibido en caja."));
 
         CashMovement movement = new CashMovement();
+        movement.setTenantId(purchase.getTenantId());
         movement.setCashSessionId(request.cashRegisterSessionId() != null ? request.cashRegisterSessionId() : 1L);
         movement.setSaleId(purchase.getId());
         movement.setType(CashMovementType.SALE_PAYMENT);
@@ -400,7 +418,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                         .toList();
                 restTemplate.postForEntity(
                         productServiceUrl + "/api/v1/products/purchase",
-                        internalSecurityEntity(stockDiscount),
+                        internalSecurityEntity(stockDiscount, purchase),
                         Void.class
                 );
                 purchase.setInventoryDiscountedAt(Instant.now());
@@ -442,11 +460,12 @@ public class PurchaseServiceImpl implements PurchaseService {
                     invoiceItems
             );
 
-            InvoiceGenerateResponse invoice = restTemplate.postForObject(
+            ResponseEntity<InvoiceGenerateResponse> invoiceResponse = restTemplate.postForEntity(
                     invoiceServiceUrl + "/api/v1/invoices/generate",
-                    invoiceRequest,
+                    internalSecurityEntity(invoiceRequest, purchase),
                     InvoiceGenerateResponse.class
             );
+            InvoiceGenerateResponse invoice = invoiceResponse.getBody();
 
             if (invoice != null) {
                 purchase.setInvoiceId(invoice.invoiceId());
@@ -500,11 +519,21 @@ public class PurchaseServiceImpl implements PurchaseService {
         return new HttpEntity<>(body, headers);
     }
 
+    private <T> HttpEntity<T> internalSecurityEntity(T body, Purchase purchase) {
+        HttpHeaders headers = internalSecurityHeaders(purchase);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new HttpEntity<>(body, headers);
+    }
+
     private HttpEntity<Void> internalSecurityEntity() {
         return new HttpEntity<>(internalSecurityHeaders());
     }
 
     private HttpHeaders internalSecurityHeaders() {
+        return internalSecurityHeaders(null);
+    }
+
+    private HttpHeaders internalSecurityHeaders(Purchase purchase) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
@@ -516,6 +545,16 @@ public class PurchaseServiceImpl implements PurchaseService {
                     headers.set(headerName, value);
                 }
             });
+        }
+
+        boolean hasUserContext = headers.getFirst("X-User-Id") != null && headers.getFirst("X-Username") != null;
+        if (purchase != null && !hasUserContext && !isBlank(internalServiceToken)) {
+            headers.set(INTERNAL_SERVICE_HEADER, PURCHASE_MICROSERVICE);
+            headers.set(INTERNAL_SERVICE_TOKEN_HEADER, internalServiceToken);
+        }
+
+        if (headers.getFirst("X-Tenant-Id") == null && purchase != null && !isBlank(purchase.getTenantId())) {
+            headers.set("X-Tenant-Id", purchase.getTenantId());
         }
 
         return headers;

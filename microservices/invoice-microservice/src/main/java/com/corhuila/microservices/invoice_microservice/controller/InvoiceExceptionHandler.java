@@ -1,5 +1,6 @@
 package com.corhuila.microservices.invoice_microservice.controller;
 
+import com.corhuila.microservices.invoice_microservice.security.InvoiceSecurityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,11 @@ public class InvoiceExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(IllegalArgumentException exception) {
         return ResponseEntity.badRequest().body(error("BAD_REQUEST", exception.getMessage()));
+    }
+
+    @ExceptionHandler(InvoiceSecurityException.class)
+    public ResponseEntity<Map<String, Object>> handleSecurity(InvoiceSecurityException exception) {
+        return ResponseEntity.status(exception.getStatus()).body(error("SECURITY_ERROR", exception.getMessage()));
     }
 
     private Map<String, Object> error(String code, String message) {

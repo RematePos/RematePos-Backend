@@ -77,11 +77,13 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = roles.stream()
+                .filter(role -> RoleScope.PLATFORM.equals(role.getScope()))
                 .map(Role::getName)
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         roles.stream()
+                .filter(role -> RoleScope.PLATFORM.equals(role.getScope()))
                 .flatMap(role -> role.getPermissions().stream())
                 .map(Permission::getName)
                 .map(SimpleGrantedAuthority::new)

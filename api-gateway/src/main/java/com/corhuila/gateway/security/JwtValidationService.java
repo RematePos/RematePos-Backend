@@ -46,9 +46,15 @@ public class JwtValidationService {
         return new JwtClaims(
                 String.valueOf(userId),
                 username,
+                optionalString(claims.get("tenantId")),
+                optionalString(claims.get("tenantSlug")),
                 getStringList(claims, "roles"),
                 getStringList(claims, "permissions")
         );
+    }
+
+    private String optionalString(Object value) {
+        return value == null ? null : String.valueOf(value);
     }
 
     private List<String> getStringList(Claims claims, String claimName) {

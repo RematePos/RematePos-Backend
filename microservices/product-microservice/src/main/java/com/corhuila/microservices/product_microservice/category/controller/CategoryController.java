@@ -6,6 +6,7 @@ import com.corhuila.microservices.product_microservice.category.dto.CategoryRequ
 import com.corhuila.microservices.product_microservice.category.dto.CategoryResponse;
 import com.corhuila.microservices.product_microservice.category.dto.CategoryOptionResponse;
 import com.corhuila.microservices.product_microservice.category.service.CategoryService;
+import com.corhuila.microservices.product_microservice.security.SecurityContextHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
 
     private final CategoryService service;
+    private final SecurityContextHelper security;
 
     @GetMapping()
     public ResponseEntity<?> getAllCategories(
@@ -26,6 +28,7 @@ public class CategoryController {
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "search", required = false) String search
     ) {
+        security.requirePermission("CATEGORIES_READ");
         if (page != null || size != null || search != null) {
             Page<CategoryResponse> result = service.getCategoriesPage(
                     page == null ? 0 : page,
@@ -40,17 +43,20 @@ public class CategoryController {
 
     @GetMapping("/options")
     public ResponseEntity<List<CategoryOptionResponse>> getCategoryOptions() {
+        security.requirePermission("CATEGORIES_READ");
         return ResponseEntity.ok(service.getCategoryOptions());
     }
 
     @PostMapping()
     public ResponseEntity<Integer> createCategory(@Valid @RequestBody CategoryRequest request) {
+        security.requirePermission("CATEGORIES_CREATE");
         return ResponseEntity.ok(service.createCategory(request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Integer id) throws Exception {
 
+        security.requirePermission("CATEGORIES_UPDATE");
         service.deleteCategory(id);
         return ResponseEntity.accepted().build();
     }
@@ -58,12 +64,14 @@ public class CategoryController {
     @PutMapping()
     public ResponseEntity<Void> updateCategory(@Valid @RequestBody CategoryRequest request) {
 
+        security.requirePermission("CATEGORIES_UPDATE");
         service.updateCategory(request);
         return ResponseEntity.accepted().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable("id") Integer id) {
+        security.requirePermission("CATEGORIES_READ");
         return ResponseEntity.ok(service.getCategoryById(id));
     }
 }

@@ -19,6 +19,7 @@ import com.corhuila.microservices.product_microservice.product.dto.ProductRespon
 import com.corhuila.microservices.product_microservice.product.mapper.ProductMapper;
 import com.corhuila.microservices.product_microservice.product.repository.ProductRepository;
 import com.corhuila.microservices.product_microservice.product.service.ProductService;
+import com.corhuila.microservices.product_microservice.security.SecurityContextHelper;
 
 
 @Service
@@ -27,9 +28,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository repository;
     private final CategoryService categoryService;
     private final ProductMapper mapper;
+    private final SecurityContextHelper security;
 
     public List<ProductResponse> getProducts() {
-        return repository.findAll().stream()
+        String tenantId = security.getTenantId();
+        return repository.findAllByTenantId(tenantId).stream()
                 .map(mapper::toProductResponse)
                 .toList();
     }
@@ -38,17 +41,19 @@ public class ProductServiceImpl implements ProductService {
         if (id == null) {
             throw new ProductException("Product ID cannot be null");
         }
-        return repository.findById(id)
+        String tenantId = security.getTenantId();
+        return repository.findByIdAndTenantId(id, tenantId)
                 .map(mapper::toProductResponse)
-                .orElse(null);
+                .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(id)));
     }
 
     public List<ProductResponse> getProductsByCategoryId(Integer id) {
         if (id == null) {
             throw new ProductException("Category ID cannot be null");
         }
-        return repository.findAll().stream()
-                .filter(product -> product.getCategory().getId().equals(id))
+        String tenantId = security.getTenantId();
+        categoryService.getCategoryById(id);
+        return repository.findAllByCategoryIdAndTenantId(id, tenantId).stream()
                 .map(mapper::toProductResponse)
                 .toList();
     }
@@ -65,11 +70,10 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductException("Product ID cannot be null");
         }
 
-        if (categoryService.getCategoryById(request.categoryId()) == null) {
-            throw new ProductException("Category with ID %s not found".formatted(request.categoryId()));
-        }
+        String tenantId = security.getTenantId();
+        categoryService.getCategoryById(request.categoryId());
 
-        Product existingProduct = repository.findById(request.id())
+        Product existingProduct = repository.findByIdAndTenantId(request.id(), tenantId)
                 .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(request.id())));
 
         existingProduct.setName(request.name());
@@ -87,28 +91,29 @@ public class ProductServiceImpl implements ProductService {
         if (id == null) {
             throw new ProductException("Product ID cannot be null");
         }
-        if (!repository.existsById(id)) {
-            throw new ProductException("Product with ID %s not found".formatted(id));
-        }
-        repository.deleteById(id);
+        String tenantId = security.getTenantId();
+        Product product = repository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(id)));
+        repository.delete(product);
     }
 
     public Integer createProduct(ProductRequest product) {
 
-        if (categoryService.getCategoryById(product.categoryId()) == null) {
-            throw new ProductException("Category with ID %s not found".formatted(product.categoryId()));
-        }
+        String tenantId = security.getTenantId();
+        categoryService.getCategoryById(product.categoryId());
 
         Product newProduct = mapper.toProduct(product);
+        newProduct.setTenantId(tenantId);
         Product savedProduct = repository.save(newProduct);
         return savedProduct.getId();
     }
 
     @Transactional
     public void purchaseProduct(List<ProductQuantityRequest> request) {
+        String tenantId = security.getTenantId();
         for (ProductQuantityRequest item : request) {
 
-            Product product = repository.findById(item.productId())
+            Product product = repository.findByIdAndTenantId(item.productId(), tenantId)
                     .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(item.productId())));
 
             if (item.quantity() < 0) {
@@ -126,8 +131,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     public void restockProduct(List<ProductQuantityRequest> request) {
+        String tenantId = security.getTenantId();
         for (ProductQuantityRequest item : request) {
-            Product product = repository.findById(item.productId())
+            Product product = repository.findByIdAndTenantId(item.productId(), tenantId)
                     .orElseThrow(() -> new ProductException("Product with ID %s not found".formatted(item.productId())));
 
             if (item.quantity() < 0) {

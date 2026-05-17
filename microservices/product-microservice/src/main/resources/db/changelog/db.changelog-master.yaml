@@ -8,4 +8,6 @@ databaseChangeLog:
   - include:
       file: 01_tables/003_create_table_product_categories.yaml
   - include:
+      file: 01_tables/004_add_tenant_id_to_products_categories.yaml
+  - include:
       file: 09_inserts/001_seed_categories.yaml

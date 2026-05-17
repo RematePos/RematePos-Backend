@@ -2,6 +2,8 @@ package com.corhuila.microservices.auth_microservice.service;
 
 import com.corhuila.microservices.auth_microservice.model.Permission;
 import com.corhuila.microservices.auth_microservice.model.Role;
+import com.corhuila.microservices.auth_microservice.model.RoleScope;
+import com.corhuila.microservices.auth_microservice.model.TenantMembership;
 import com.corhuila.microservices.auth_microservice.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -34,28 +36,52 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
+        return generateToken(user, null);
+    }
+
+    public String generateToken(User user, TenantMembership membership) {
         Instant now = Instant.now();
         Instant expiration = now.plusMillis(expirationMs);
-        List<String> roles = user.getRoles().stream()
+        List<String> roles = membership == null
+                ? List.of()
+                : List.of(membership.getRole().getName());
+        List<String> platformRoles = user.getRoles().stream()
+                .filter(role -> RoleScope.PLATFORM.equals(role.getScope()))
                 .map(Role::getName)
                 .sorted()
                 .toList();
-        List<String> permissions = user.getRoles().stream()
+        List<String> platformPermissions = user.getRoles().stream()
+                .filter(role -> RoleScope.PLATFORM.equals(role.getScope()))
                 .flatMap(role -> role.getPermissions().stream())
                 .map(Permission::getName)
                 .distinct()
                 .sorted()
                 .toList();
+        List<String> tenantPermissions = membership == null
+                ? List.of()
+                : membership.getRole().getPermissions().stream()
+                        .map(Permission::getName)
+                        .distinct()
+                        .sorted()
+                        .toList();
 
-        return Jwts.builder()
+        io.jsonwebtoken.JwtBuilder builder = Jwts.builder()
                 .subject(user.getUsername())
                 .claim("uid", user.getId())
                 .claim("roles", roles)
-                .claim("permissions", permissions)
+                .claim("platformRoles", platformRoles)
+                .claim("platformPermissions", platformPermissions)
+                .claim("permissions", tenantPermissions)
                 .issuedAt(Date.from(now))
-                .expiration(Date.from(expiration))
-                .signWith(signingKey)
-                .compact();
+                .expiration(Date.from(expiration));
+
+        if (membership != null) {
+            builder.claim("tenantId", membership.getTenant().getId())
+                    .claim("tenantSlug", membership.getTenant().getSlug())
+                    .claim("tenantName", membership.getTenant().getName());
+        }
+
+        return builder.signWith(signingKey).compact();
     }
 
     public String extractUsername(String token) {
@@ -65,6 +91,17 @@ public class JwtService {
     public boolean isTokenValid(String token, User user) {
         Claims claims = parseClaims(token);
         return user.getUsername().equals(claims.getSubject()) && claims.getExpiration().after(new Date());
+    }
+
+    public Long extractTenantId(String token) {
+        Object tenantId = parseClaims(token).get("tenantId");
+        if (tenantId == null) {
+            return null;
+        }
+        if (tenantId instanceof Number number) {
+            return number.longValue();
+        }
+        return Long.parseLong(String.valueOf(tenantId));
     }
 
     public long getExpirationMs() {

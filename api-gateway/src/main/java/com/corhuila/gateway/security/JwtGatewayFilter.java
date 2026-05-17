@@ -29,7 +29,9 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             "X-User-Id",
             "X-Username",
             "X-Roles",
-            "X-Permissions"
+            "X-Permissions",
+            "X-Tenant-Id",
+            "X-Tenant-Slug"
     );
 
     private final JwtValidationService jwtValidationService;
@@ -121,7 +123,8 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
         @Override
         public Enumeration<String> getHeaders(String name) {
             if (isInternalHeader(name)) {
-                return Collections.enumeration(List.of(internalHeaderValue(name)));
+                String value = internalHeaderValue(name);
+                return Collections.enumeration(value == null ? List.of() : List.of(value));
             }
             return super.getHeaders(name);
         }
@@ -136,7 +139,9 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
                     names.add(name);
                 }
             }
-            names.addAll(INTERNAL_HEADER_NAMES);
+            INTERNAL_HEADER_NAMES.stream()
+                    .filter(name -> internalHeaderValue(name) != null)
+                    .forEach(names::add);
             return Collections.enumeration(names);
         }
 
@@ -149,6 +154,8 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             if ("X-Username".equalsIgnoreCase(name)) return claims.username();
             if ("X-Roles".equalsIgnoreCase(name)) return String.join(",", claims.roles());
             if ("X-Permissions".equalsIgnoreCase(name)) return String.join(",", claims.permissions());
+            if ("X-Tenant-Id".equalsIgnoreCase(name)) return claims.tenantId();
+            if ("X-Tenant-Slug".equalsIgnoreCase(name)) return claims.tenantSlug();
             throw new IllegalArgumentException("Unsupported internal header");
         }
     }

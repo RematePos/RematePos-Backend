@@ -482,12 +482,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     private CustomerClientResponse getCustomerByDocument(String documentType, String documentNumber) {
-        CustomerClientResponse response = restTemplate.getForObject(
+        ResponseEntity<CustomerClientResponse> responseEntity = restTemplate.exchange(
                 customerServiceUrl + "/api/v1/customers/document?type={type}&number={number}",
+                HttpMethod.GET,
+                internalSecurityEntity(),
                 CustomerClientResponse.class,
                 documentType,
                 documentNumber
         );
+
+        CustomerClientResponse response = responseEntity.getBody();
 
         if (response == null) {
             throw new NoSuchElementException("Customer not found with document " + documentType + "-" + documentNumber);

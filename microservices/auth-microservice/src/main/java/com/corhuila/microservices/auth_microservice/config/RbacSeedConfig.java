@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 public class RbacSeedConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(RbacSeedConfig.class);
 
     private static final List<String> ALL_PERMISSIONS = List.of(
             "SALES_READ",
@@ -95,9 +99,21 @@ public class RbacSeedConfig {
             RbacSeeder seeder,
             @Value("${auth.seed-demo-users:false}") boolean seedDemoUsers,
             @Value("${auth.demo-admin-password:}") String adminPassword,
-            @Value("${auth.demo-cashier-password:}") String cashierPassword
+            @Value("${auth.demo-cashier-password:}") String cashierPassword,
+            @Value("${auth.seed-platform-admin:false}") boolean seedPlatformAdmin,
+            @Value("${auth.platform-admin-username:platform.admin}") String platformAdminUsername,
+            @Value("${auth.platform-admin-password:}") String platformAdminPassword,
+            @Value("${auth.platform-admin-email:platform.admin@example.com}") String platformAdminEmail
     ) {
-        return args -> seeder.seed(seedDemoUsers, adminPassword, cashierPassword);
+        return args -> seeder.seed(
+                seedDemoUsers,
+                adminPassword,
+                cashierPassword,
+                seedPlatformAdmin,
+                platformAdminUsername,
+                platformAdminPassword,
+                platformAdminEmail
+        );
     }
 
     @Configuration
@@ -127,7 +143,15 @@ public class RbacSeedConfig {
         }
 
         @Transactional
-        public void seed(boolean seedDemoUsers, String adminPassword, String cashierPassword) {
+        public void seed(
+                boolean seedDemoUsers,
+                String adminPassword,
+                String cashierPassword,
+                boolean seedPlatformAdmin,
+                String platformAdminUsername,
+                String platformAdminPassword,
+                String platformAdminEmail
+        ) {
             Map<String, Permission> permissions = seedPermissions();
             backfillRoleScopes();
             seedRole("ADMIN", "Administrador RematePOS legado", RoleScope.TENANT, ALL_PERMISSIONS, permissions);
@@ -135,13 +159,17 @@ public class RbacSeedConfig {
             seedRole("BUSINESS_ADMIN", "Administrador del negocio", RoleScope.TENANT, ALL_PERMISSIONS, permissions);
             Role cashier = seedRole("CASHIER", "Cajero RematePOS", RoleScope.TENANT, CASHIER_PERMISSIONS, permissions);
             seedRole("INVENTORY_MANAGER", "Gestor de inventario", RoleScope.TENANT, INVENTORY_MANAGER_PERMISSIONS, permissions);
-            seedRole("PLATFORM_SUPER_ADMIN", "Administrador de plataforma", RoleScope.PLATFORM, ALL_PERMISSIONS, permissions);
+            Role platformSuperAdmin = seedRole("PLATFORM_SUPER_ADMIN", "Administrador de plataforma", RoleScope.PLATFORM, ALL_PERMISSIONS, permissions);
             seedRole("QA_SUPPORT", "Soporte QA RematePOS", RoleScope.PLATFORM, QA_SUPPORT_PERMISSIONS, permissions);
 
             if (seedDemoUsers) {
                 Tenant demoTenant = seedDemoTenant();
                 seedDemoUser("admin.demo", "admin.demo@rematepos.local", "Admin Demo", adminPassword, demoTenant, businessOwner);
                 seedDemoUser("cashier.demo", "cashier.demo@rematepos.local", "Cashier Demo", cashierPassword, demoTenant, cashier);
+            }
+
+            if (seedPlatformAdmin) {
+                seedPlatformAdmin(platformAdminUsername, platformAdminEmail, platformAdminPassword, platformSuperAdmin);
             }
         }
 
@@ -218,6 +246,40 @@ public class RbacSeedConfig {
                 membership.setActive(true);
                 tenantMembershipRepository.save(membership);
             }
+        }
+
+        private void seedPlatformAdmin(String username, String email, String password, Role platformSuperAdmin) {
+            if (password == null || password.isBlank()) {
+                log.warn("Platform admin seed is enabled but password is not configured. User was not created.");
+                return;
+            }
+            if (username == null || username.isBlank() || email == null || email.isBlank()) {
+                log.warn("Platform admin seed is enabled but username or email is not configured. User was not created.");
+                return;
+            }
+
+            String normalizedUsername = username.trim().toLowerCase();
+            String normalizedEmail = email.trim().toLowerCase();
+            User user = userRepository.findByUsername(normalizedUsername).orElseGet(User::new);
+            boolean emailBelongsToAnotherUser = userRepository.findByEmail(normalizedEmail)
+                    .map(existing -> user.getId() == null || !existing.getId().equals(user.getId()))
+                    .orElse(false);
+
+            if (emailBelongsToAnotherUser) {
+                log.warn("Platform admin seed skipped because configured email is already in use.");
+                return;
+            }
+
+            if (user.getId() == null) {
+                user.setUsername(normalizedUsername);
+                user.setFullName("Platform Super Admin");
+                user.setEnabled(true);
+            }
+
+            user.setEmail(normalizedEmail);
+            user.setPasswordHash(passwordEncoder.encode(password));
+            user.getRoles().add(platformSuperAdmin);
+            userRepository.save(user);
         }
     }
 }

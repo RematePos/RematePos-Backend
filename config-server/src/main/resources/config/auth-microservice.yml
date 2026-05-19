@@ -22,6 +22,10 @@ auth:
   seed-demo-users: ${AUTH_SEED_DEMO_USERS:false}
   demo-admin-password: ${AUTH_DEMO_ADMIN_PASSWORD:}
   demo-cashier-password: ${AUTH_DEMO_CASHIER_PASSWORD:}
+  seed-platform-admin: ${AUTH_SEED_PLATFORM_ADMIN:false}
+  platform-admin-username: ${AUTH_PLATFORM_ADMIN_USERNAME:platform.admin}
+  platform-admin-password: ${AUTH_PLATFORM_ADMIN_PASSWORD:}
+  platform-admin-email: ${AUTH_PLATFORM_ADMIN_EMAIL:platform.admin@example.com}
 
 eureka:
   client:

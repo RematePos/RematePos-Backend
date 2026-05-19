@@ -16,6 +16,16 @@ public record InvoiceResponse(
 		BigDecimal tax,
 		BigDecimal total,
 		Instant issuedAt,
+		String provider,
+		String providerEnvironment,
+		String providerStatus,
+		String cufe,
+		String cude,
+		String qrCode,
+		String xmlContent,
+		String pdfUrl,
+		Boolean fiscalValid,
+		String validationMessage,
 		List<InvoiceItemResponse> items
 ) {
 }

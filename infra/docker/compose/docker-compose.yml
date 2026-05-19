@@ -120,6 +120,13 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME:-postgres}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD:-example_postgres_password}
       - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
+      - BILLING_PROVIDER=${BILLING_PROVIDER:-MOCK_DIAN}
+      - BILLING_ENVIRONMENT=${BILLING_ENVIRONMENT:-DEMO}
+      - BILLING_DEMO_LEGEND=${BILLING_DEMO_LEGEND:-Documento generado en ambiente de demostración, sin validez tributaria.}
+      - FACTUS_API_BASE_URL=${FACTUS_API_BASE_URL:-}
+      - FACTUS_API_KEY=${FACTUS_API_KEY:-}
+      - FACTUS_CLIENT_ID=${FACTUS_CLIENT_ID:-}
+      - FACTUS_CLIENT_SECRET=${FACTUS_CLIENT_SECRET:-}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     networks:

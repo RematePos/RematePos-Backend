@@ -51,6 +51,31 @@ public class Invoice {
     @Column(nullable = false, updatable = false)
     private Instant issuedAt;
 
+    private String provider;
+
+    private String providerEnvironment;
+
+    private String providerStatus;
+
+    private String providerReference;
+
+    private String cufe;
+
+    private String cude;
+
+    @Column(columnDefinition = "TEXT")
+    private String qrCode;
+
+    @Column(columnDefinition = "TEXT")
+    private String xmlContent;
+
+    private String pdfUrl;
+
+    private Boolean fiscalValid;
+
+    @Column(columnDefinition = "TEXT")
+    private String validationMessage;
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<InvoiceItem> items = new ArrayList<>();
 

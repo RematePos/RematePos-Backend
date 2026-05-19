@@ -1,5 +1,9 @@
 package com.corhuila.microservices.invoice_microservice.service.impl;
 
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderRequest;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderResolver;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderResponse;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderStatus;
 import com.corhuila.microservices.invoice_microservice.dto.*;
 import com.corhuila.microservices.invoice_microservice.model.Invoice;
 import com.corhuila.microservices.invoice_microservice.model.InvoiceItem;
@@ -24,13 +28,20 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceRepository repository;
     private final SecurityContextHelper securityContextHelper;
+    private final BillingProviderResolver billingProviderResolver;
 
     @Override
     @Transactional
     public InvoiceGenerateResponse generate(InvoiceGenerateRequest request) {
         String tenantId = securityContextHelper.getTenantIdForInternalService("purchase-microservice");
         return repository.findByPurchaseIdAndTenantId(request.purchaseId(), tenantId)
-                .map(existing -> new InvoiceGenerateResponse(existing.getId(), existing.getInvoiceNumber()))
+                .map(existing -> {
+                    if (existing.getProviderStatus() == null || existing.getProviderStatus().isBlank()) {
+                        applyBillingProvider(existing);
+                        existing = repository.save(existing);
+                    }
+                    return toGenerateResponse(existing);
+                })
                 .orElseGet(() -> {
                     Invoice invoice = new Invoice();
                     invoice.setTenantId(tenantId);
@@ -55,8 +66,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                         invoice.getItems().add(entity);
                     }
 
+                    applyBillingProvider(invoice);
                     invoice = repository.save(invoice);
-                    return new InvoiceGenerateResponse(invoice.getId(), invoice.getInvoiceNumber());
+                    return toGenerateResponse(invoice);
                 });
     }
 
@@ -136,6 +148,74 @@ public class InvoiceServiceImpl implements InvoiceService {
         return normalized;
     }
 
+    private void applyBillingProvider(Invoice invoice) {
+        try {
+            BillingProviderResponse providerResponse = billingProviderResolver.resolve()
+                    .issueInvoice(toBillingProviderRequest(invoice));
+            applyBillingProviderResponse(invoice, providerResponse);
+        } catch (Exception ex) {
+            invoice.setProviderStatus(BillingProviderStatus.PROVIDER_FAILED.name());
+            invoice.setFiscalValid(false);
+            invoice.setValidationMessage(ex.getMessage());
+        }
+    }
+
+    private BillingProviderRequest toBillingProviderRequest(Invoice invoice) {
+        List<BillingProviderRequest.LineItem> items = invoice.getItems().stream()
+                .map(item -> new BillingProviderRequest.LineItem(
+                        item.getProductId(),
+                        item.getProductName(),
+                        item.getQuantity(),
+                        item.getUnitPrice(),
+                        item.getLineTotal()
+                ))
+                .toList();
+
+        return new BillingProviderRequest(
+                invoice.getInvoiceNumber(),
+                invoice.getPurchaseId(),
+                invoice.getCustomerId(),
+                invoice.getCustomerDocumentType(),
+                invoice.getCustomerDocumentNumber(),
+                invoice.getCustomerFullName(),
+                invoice.getSubtotal(),
+                invoice.getTax(),
+                invoice.getTotal(),
+                invoice.getIssuedAt() == null ? Instant.now() : invoice.getIssuedAt(),
+                items
+        );
+    }
+
+    private void applyBillingProviderResponse(Invoice invoice, BillingProviderResponse response) {
+        invoice.setProvider(response.provider());
+        invoice.setProviderEnvironment(response.environment());
+        invoice.setProviderStatus(response.status() == null ? null : response.status().name());
+        invoice.setProviderReference(response.providerReference());
+        invoice.setCufe(response.cufe());
+        invoice.setCude(response.cude());
+        invoice.setQrCode(response.qrCode());
+        invoice.setXmlContent(response.xmlContent());
+        invoice.setPdfUrl(response.pdfUrl());
+        invoice.setFiscalValid(response.fiscalValid());
+        invoice.setValidationMessage(response.validationMessage());
+    }
+
+    private InvoiceGenerateResponse toGenerateResponse(Invoice invoice) {
+        return new InvoiceGenerateResponse(
+                invoice.getId(),
+                invoice.getInvoiceNumber(),
+                invoice.getProvider(),
+                invoice.getProviderEnvironment(),
+                invoice.getProviderStatus(),
+                invoice.getCufe(),
+                invoice.getCude(),
+                invoice.getQrCode(),
+                invoice.getPdfUrl(),
+                invoice.getFiscalValid(),
+                invoice.getValidationMessage()
+        );
+    }
+
     private InvoiceResponse toResponse(Invoice invoice) {
         List<InvoiceItemResponse> items = invoice.getItems().stream()
                 .map(i -> new InvoiceItemResponse(
@@ -159,6 +239,16 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoice.getTax(),
                 invoice.getTotal(),
                 invoice.getIssuedAt(),
+                invoice.getProvider(),
+                invoice.getProviderEnvironment(),
+                invoice.getProviderStatus(),
+                invoice.getCufe(),
+                invoice.getCude(),
+                invoice.getQrCode(),
+                invoice.getXmlContent(),
+                invoice.getPdfUrl(),
+                invoice.getFiscalValid(),
+                invoice.getValidationMessage(),
                 items
         );
     }

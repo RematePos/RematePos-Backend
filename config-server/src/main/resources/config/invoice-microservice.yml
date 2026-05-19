@@ -19,6 +19,16 @@ logging:
     root: INFO
     com.corhuila.microservices: WARN
 
+billing:
+  provider: ${BILLING_PROVIDER:MOCK_DIAN}
+  environment: ${BILLING_ENVIRONMENT:DEMO}
+  demo-legend: ${BILLING_DEMO_LEGEND:Documento generado en ambiente de demostración, sin validez tributaria.}
+  factus:
+    api-base-url: ${FACTUS_API_BASE_URL:}
+    api-key: ${FACTUS_API_KEY:}
+    client-id: ${FACTUS_CLIENT_ID:}
+    client-secret: ${FACTUS_CLIENT_SECRET:}
+
 server:
   port: 8095
 

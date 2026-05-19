@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-purchase-add-tenant-id-to-purchases
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: purchases
+          - not:
+              columnExists:
+                tableName: purchases
+                columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: purchases
+            columns:
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(255)
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-add-tenant-id-to-cash-movements
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: cash_movements
+          - not:
+              columnExists:
+                tableName: cash_movements
+                columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: cash_movements
+            columns:
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(255)
+      rollback: []

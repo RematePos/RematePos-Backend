@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 01_tables/001_create_invoice_schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 01_tables/002_add_tenant_and_provider_fields_to_invoices.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 02_indexes/001_create_invoice_indexes.yaml
+      relativeToChangelogFile: true

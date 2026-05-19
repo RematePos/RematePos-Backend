@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-invoice-add-tenant-id
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              columnExists:
+                tableName: invoices
+                columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: invoices
+            columns:
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(255)
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-invoice-add-provider-fields
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              columnExists:
+                tableName: invoices
+                columnName: provider
+      changes:
+        - addColumn:
+            tableName: invoices
+            columns:
+              - column:
+                  name: provider
+                  type: VARCHAR(255)
+              - column:
+                  name: provider_environment
+                  type: VARCHAR(255)
+              - column:
+                  name: provider_status
+                  type: VARCHAR(255)
+              - column:
+                  name: provider_reference
+                  type: VARCHAR(255)
+              - column:
+                  name: cufe
+                  type: VARCHAR(255)
+              - column:
+                  name: cude
+                  type: VARCHAR(255)
+              - column:
+                  name: qr_code
+                  type: TEXT
+              - column:
+                  name: xml_content
+                  type: TEXT
+              - column:
+                  name: pdf_url
+                  type: VARCHAR(255)
+              - column:
+                  name: fiscal_valid
+                  type: BOOLEAN
+              - column:
+                  name: validation_message
+                  type: TEXT
+      rollback: []

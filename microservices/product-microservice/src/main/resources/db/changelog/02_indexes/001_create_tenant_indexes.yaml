@@ -1,0 +1,96 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-product-index-products-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: products
+          - columnExists:
+              tableName: products
+              columnName: tenant_id
+          - not:
+              indexExists:
+                indexName: idx_products_tenant_id
+      changes:
+        - createIndex:
+            tableName: products
+            indexName: idx_products_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-product-index-products-tenant-category
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: products
+          - columnExists:
+              tableName: products
+              columnName: tenant_id
+          - not:
+              indexExists:
+                indexName: idx_products_tenant_category_id
+      changes:
+        - createIndex:
+            tableName: products
+            indexName: idx_products_tenant_category_id
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: category_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-product-index-categories-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: categories
+          - columnExists:
+              tableName: categories
+              columnName: tenant_id
+          - not:
+              indexExists:
+                indexName: idx_categories_tenant_id
+      changes:
+        - createIndex:
+            tableName: categories
+            indexName: idx_categories_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-product-index-categories-tenant-name
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: categories
+          - columnExists:
+              tableName: categories
+              columnName: tenant_id
+          - not:
+              indexExists:
+                indexName: idx_categories_tenant_name
+      changes:
+        - createIndex:
+            tableName: categories
+            indexName: idx_categories_tenant_name
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: name
+      rollback: []

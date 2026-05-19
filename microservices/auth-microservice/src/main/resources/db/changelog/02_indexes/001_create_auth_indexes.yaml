@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-auth-index-roles-name
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: roles
+          - not:
+              indexExists:
+                indexName: idx_roles_name
+      changes:
+        - createIndex:
+            tableName: roles
+            indexName: idx_roles_name
+            columns:
+              - column:
+                  name: name
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-auth-index-tenants-slug
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: tenants
+          - not:
+              indexExists:
+                indexName: idx_tenants_slug
+      changes:
+        - createIndex:
+            tableName: tenants
+            indexName: idx_tenants_slug
+            columns:
+              - column:
+                  name: slug
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-auth-index-tenant-memberships-user-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: tenant_memberships
+          - not:
+              indexExists:
+                indexName: idx_tenant_memberships_user_tenant
+      changes:
+        - createIndex:
+            tableName: tenant_memberships
+            indexName: idx_tenant_memberships_user_tenant
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-auth-index-user-roles-user-role
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: user_roles
+          - not:
+              indexExists:
+                indexName: idx_user_roles_user_role
+      changes:
+        - createIndex:
+            tableName: user_roles
+            indexName: idx_user_roles_user_role
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: role_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-auth-index-role-permissions-role-permission
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: role_permissions
+          - not:
+              indexExists:
+                indexName: idx_role_permissions_role_permission
+      changes:
+        - createIndex:
+            tableName: role_permissions
+            indexName: idx_role_permissions_role_permission
+            columns:
+              - column:
+                  name: role_id
+              - column:
+                  name: permission_id
+      rollback: []

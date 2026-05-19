@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-invoice-index-invoices-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              indexExists:
+                indexName: idx_invoices_tenant_id
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-invoice-index-invoices-tenant-purchase
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              indexExists:
+                indexName: idx_invoices_tenant_purchase_id
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_purchase_id
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: purchase_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-invoice-index-invoices-tenant-invoice-number
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              indexExists:
+                indexName: idx_invoices_tenant_invoice_number
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_invoice_number
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: invoice_number
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-invoice-index-invoices-tenant-customer
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              indexExists:
+                indexName: idx_invoices_tenant_customer_id
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_customer_id
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: customer_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-invoice-index-invoices-provider-status
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: invoices
+          - not:
+              indexExists:
+                indexName: idx_invoices_provider_status
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_provider_status
+            columns:
+              - column:
+                  name: provider_status
+      rollback: []

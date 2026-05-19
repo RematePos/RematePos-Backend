@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 01_tables/001_create_purchase_schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 01_tables/002_add_tenant_id_to_purchase_schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 02_indexes/001_create_purchase_indexes.yaml
+      relativeToChangelogFile: true

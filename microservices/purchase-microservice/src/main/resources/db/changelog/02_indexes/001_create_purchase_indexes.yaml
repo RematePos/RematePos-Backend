@@ -1,0 +1,126 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-purchase-index-purchases-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: purchases
+          - not:
+              indexExists:
+                indexName: idx_purchases_tenant_id
+      changes:
+        - createIndex:
+            tableName: purchases
+            indexName: idx_purchases_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-index-purchases-tenant-invoice
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: purchases
+          - not:
+              indexExists:
+                indexName: idx_purchases_tenant_invoice_number
+      changes:
+        - createIndex:
+            tableName: purchases
+            indexName: idx_purchases_tenant_invoice_number
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: invoice_number
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-index-purchases-tenant-customer
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: purchases
+          - not:
+              indexExists:
+                indexName: idx_purchases_tenant_customer_id
+      changes:
+        - createIndex:
+            tableName: purchases
+            indexName: idx_purchases_tenant_customer_id
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: customer_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-index-purchases-payment-reference
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: purchases
+          - not:
+              indexExists:
+                indexName: idx_purchases_payment_reference
+      changes:
+        - createIndex:
+            tableName: purchases
+            indexName: idx_purchases_payment_reference
+            columns:
+              - column:
+                  name: payment_reference
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-index-cash-movements-tenant
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: cash_movements
+          - not:
+              indexExists:
+                indexName: idx_cash_movements_tenant_id
+      changes:
+        - createIndex:
+            tableName: cash_movements
+            indexName: idx_cash_movements_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-index-cash-movements-tenant-sale
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        and:
+          - tableExists:
+              tableName: cash_movements
+          - not:
+              indexExists:
+                indexName: idx_cash_movements_tenant_sale_id
+      changes:
+        - createIndex:
+            tableName: cash_movements
+            indexName: idx_cash_movements_tenant_sale_id
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: sale_id
+      rollback: []

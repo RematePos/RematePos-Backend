@@ -1,13 +1,22 @@
 databaseChangeLog:
   - include:
       file: 00_extensions/001_create_extension_uuid_ossp.yaml
-  - include:
-      file: 01_tables/001_create_table_products.yaml
+      relativeToChangelogFile: true
   - include:
       file: 01_tables/002_create_table_categories.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 01_tables/001_create_table_products.yaml
+      relativeToChangelogFile: true
   - include:
       file: 01_tables/003_create_table_product_categories.yaml
+      relativeToChangelogFile: true
   - include:
       file: 01_tables/004_add_tenant_id_to_products_categories.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 02_indexes/001_create_tenant_indexes.yaml
+      relativeToChangelogFile: true
   - include:
       file: 09_inserts/001_seed_categories.yaml
+      relativeToChangelogFile: true

@@ -1,0 +1,237 @@
+databaseChangeLog:
+  - changeSet:
+      id: hu-178b-purchase-create-purchases
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: purchases
+      changes:
+        - createTable:
+            tableName: purchases
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(255)
+              - column:
+                  name: customer_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_document_type
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_document_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_status
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(40)
+              - column:
+                  name: payment_provider
+                  type: VARCHAR(40)
+              - column:
+                  name: payment_reference
+                  type: VARCHAR(120)
+              - column:
+                  name: provider_transaction_id
+                  type: VARCHAR(120)
+              - column:
+                  name: provider_status
+                  type: VARCHAR(80)
+              - column:
+                  name: subtotal
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tax
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: paid_amount
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cash_received
+                  type: DECIMAL(14, 2)
+              - column:
+                  name: change_amount
+                  type: DECIMAL(14, 2)
+              - column:
+                  name: cash_register_session_id
+                  type: BIGINT
+              - column:
+                  name: invoice_id
+                  type: BIGINT
+              - column:
+                  name: invoice_number
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inventory_discounted_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: paid_at
+                  type: TIMESTAMP WITH TIME ZONE
+              - column:
+                  name: notes
+                  type: VARCHAR(800)
+              - column:
+                  name: payment_evidence_note
+                  type: VARCHAR(800)
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-create-purchase-items
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: purchase_items
+      changes:
+        - createTable:
+            tableName: purchase_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: purchase_id
+                  type: BIGINT
+              - column:
+                  name: product_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_name
+                  type: VARCHAR(255)
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: returned_quantity
+                  type: INT
+              - column:
+                  name: unit_price
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: line_total
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: purchase_items
+            baseColumnNames: purchase_id
+            referencedTableName: purchases
+            referencedColumnNames: id
+            constraintName: fk_purchase_items_purchase
+      rollback: []
+
+  - changeSet:
+      id: hu-178b-purchase-create-cash-movements
+      author: codex
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: cash_movements
+      changes:
+        - createTable:
+            tableName: cash_movements
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(255)
+              - column:
+                  name: cash_session_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sale_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(14, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(240)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+      rollback: []

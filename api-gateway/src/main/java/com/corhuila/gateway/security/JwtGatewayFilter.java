@@ -23,6 +23,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
     private static final List<String> DEFAULT_PUBLIC_PATHS = List.of(
             "/api/v1/auth/login",
             "/api/v1/auth/register",
+            "/api/v1/analytics/health",
             "/actuator/health"
     );
     private static final List<String> INTERNAL_HEADER_NAMES = List.of(

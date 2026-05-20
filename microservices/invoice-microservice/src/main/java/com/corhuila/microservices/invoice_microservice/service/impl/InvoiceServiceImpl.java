@@ -150,13 +150,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private void applyBillingProvider(Invoice invoice) {
         try {
-            BillingProviderResponse providerResponse = billingProviderResolver.resolve()
+            BillingProviderResponse providerResponse = billingProviderResolver.resolve(invoice.getTenantId())
                     .issueInvoice(toBillingProviderRequest(invoice));
             applyBillingProviderResponse(invoice, providerResponse);
         } catch (Exception ex) {
             invoice.setProviderStatus(BillingProviderStatus.PROVIDER_FAILED.name());
             invoice.setFiscalValid(false);
-            invoice.setValidationMessage(ex.getMessage());
+            invoice.setValidationMessage("Billing provider execution failed");
         }
     }
 

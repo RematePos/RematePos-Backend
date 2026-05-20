@@ -30,6 +30,8 @@ billing:
   provider-username: ${BILLING_PROVIDER_USERNAME:}
   provider-token: ${BILLING_PROVIDER_TOKEN:}
   provider-timeout-ms: ${BILLING_PROVIDER_TIMEOUT_MS:10000}
+  settings:
+    encryption-key: ${BILLING_SETTINGS_ENCRYPTION_KEY:}
   factus:
     api-base-url: ${FACTUS_API_BASE_URL:}
     api-key: ${FACTUS_API_KEY:}

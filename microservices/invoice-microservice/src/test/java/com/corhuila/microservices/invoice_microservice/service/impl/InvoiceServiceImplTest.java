@@ -70,7 +70,7 @@ class InvoiceServiceImplTest {
     void generateShouldCreateInvoiceWhenPurchaseHasNoInvoice() {
         when(securityContextHelper.getTenantIdForInternalService("purchase-microservice")).thenReturn("tenant-1");
         when(repository.findByPurchaseIdAndTenantId(100L, "tenant-1")).thenReturn(Optional.empty());
-        when(billingProviderResolver.resolve()).thenReturn(billingProvider);
+        when(billingProviderResolver.resolve("tenant-1")).thenReturn(billingProvider);
         when(billingProvider.issueInvoice(any())).thenReturn(providerResponse());
         when(repository.save(any(Invoice.class))).thenAnswer(invocation -> {
             Invoice entity = invocation.getArgument(0);

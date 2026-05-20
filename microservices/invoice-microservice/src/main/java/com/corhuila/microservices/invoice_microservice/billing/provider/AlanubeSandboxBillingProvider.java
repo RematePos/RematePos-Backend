@@ -52,7 +52,11 @@ public class AlanubeSandboxBillingProvider implements BillingProvider {
 
     @Override
     public BillingProviderResponse issueInvoice(BillingProviderRequest request) {
-        if (!hasCredentials()) {
+        return issueInvoice(request, new AlanubeSandboxProviderConfig(baseUrl, username, token, timeoutMs, ENVIRONMENT));
+    }
+
+    public BillingProviderResponse issueInvoice(BillingProviderRequest request, AlanubeSandboxProviderConfig config) {
+        if (!hasCredentials(config)) {
             return failed(NOT_CONFIGURED);
         }
 
@@ -60,15 +64,15 @@ public class AlanubeSandboxBillingProvider implements BillingProvider {
             Map<String, Object> payload = invoiceMapper.toPayload(request);
             String requestBody = objectMapper.writeValueAsString(payload);
             HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofMillis(safeTimeoutMs()))
+                    .connectTimeout(Duration.ofMillis(safeTimeoutMs(config.timeoutMs())))
                     .build();
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(normalizedBaseUrl() + DEFAULT_ENDPOINT_PATH))
-                    .timeout(Duration.ofMillis(safeTimeoutMs()))
+                    .uri(URI.create(normalizedBaseUrl(config.baseUrl()) + DEFAULT_ENDPOINT_PATH))
+                    .timeout(Duration.ofMillis(safeTimeoutMs(config.timeoutMs())))
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .header("X-Provider-Username", username)
+                    .header("Authorization", "Bearer " + config.token())
+                    .header("X-Provider-Username", config.username())
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -78,7 +82,7 @@ public class AlanubeSandboxBillingProvider implements BillingProvider {
             }
 
             try {
-                return fromSuccessResponse(response.body());
+                return fromSuccessResponse(response.body(), safeEnvironment(config.environment()));
             } catch (IOException ex) {
                 return failed(RESPONSE_PROCESSING_FAILED);
             }
@@ -100,12 +104,12 @@ public class AlanubeSandboxBillingProvider implements BillingProvider {
         return true;
     }
 
-    private BillingProviderResponse fromSuccessResponse(String responseBody) throws IOException {
+    private BillingProviderResponse fromSuccessResponse(String responseBody, String environment) throws IOException {
         JsonNode root = isBlank(responseBody) ? objectMapper.createObjectNode() : objectMapper.readTree(responseBody);
         BillingProviderStatus status = mapStatus(firstText(root, "providerStatus", "status", "state", "validationStatus"));
         return new BillingProviderResponse(
                 PROVIDER,
-                ENVIRONMENT,
+                environment,
                 status,
                 firstText(root, "providerReference", "reference", "id", "uuid", "number"),
                 firstText(root, "cufe", "CUFE"),
@@ -164,17 +168,21 @@ public class AlanubeSandboxBillingProvider implements BillingProvider {
         );
     }
 
-    private boolean hasCredentials() {
-        return !isBlank(baseUrl) && !isBlank(username) && !isBlank(token);
+    private boolean hasCredentials(AlanubeSandboxProviderConfig config) {
+        return config != null && !isBlank(config.baseUrl()) && !isBlank(config.username()) && !isBlank(config.token());
     }
 
-    private String normalizedBaseUrl() {
-        String trimmed = baseUrl.trim();
+    private String normalizedBaseUrl(String configuredBaseUrl) {
+        String trimmed = configuredBaseUrl.trim();
         return trimmed.endsWith("/") ? trimmed.substring(0, trimmed.length() - 1) : trimmed;
     }
 
-    private int safeTimeoutMs() {
-        return timeoutMs <= 0 ? 10000 : timeoutMs;
+    private int safeTimeoutMs(Integer configuredTimeoutMs) {
+        return configuredTimeoutMs == null || configuredTimeoutMs <= 0 ? 10000 : configuredTimeoutMs;
+    }
+
+    private String safeEnvironment(String configuredEnvironment) {
+        return isBlank(configuredEnvironment) ? ENVIRONMENT : configuredEnvironment.trim();
     }
 
     private boolean isBlank(String value) {

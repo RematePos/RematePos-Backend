@@ -11,6 +11,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev
 
+  analytics-service:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,dev
+
   customer-microservice:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,dev

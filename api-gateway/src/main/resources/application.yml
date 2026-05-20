@@ -18,6 +18,8 @@ services:
     url: ${PURCHASE_SERVICE_URL:http://purchase-microservice:8094}
   invoice:
     url: ${INVOICE_SERVICE_URL:http://invoice-microservice:8095}
+  analytics:
+    url: ${SERVICES_ANALYTICS_URL:http://analytics-service:8090}
 
 eureka:
   client:

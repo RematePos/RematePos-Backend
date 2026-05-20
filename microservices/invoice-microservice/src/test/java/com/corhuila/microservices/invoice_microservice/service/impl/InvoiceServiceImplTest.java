@@ -1,9 +1,14 @@
 package com.corhuila.microservices.invoice_microservice.service.impl;
 
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProvider;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderResolver;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderResponse;
+import com.corhuila.microservices.invoice_microservice.billing.provider.BillingProviderStatus;
 import com.corhuila.microservices.invoice_microservice.dto.InvoiceGenerateItemRequest;
 import com.corhuila.microservices.invoice_microservice.dto.InvoiceGenerateRequest;
 import com.corhuila.microservices.invoice_microservice.model.Invoice;
 import com.corhuila.microservices.invoice_microservice.repository.InvoiceRepository;
+import com.corhuila.microservices.invoice_microservice.security.SecurityContextHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +36,15 @@ class InvoiceServiceImplTest {
     @Mock
     private InvoiceRepository repository;
 
+    @Mock
+    private SecurityContextHelper securityContextHelper;
+
+    @Mock
+    private BillingProviderResolver billingProviderResolver;
+
+    @Mock
+    private BillingProvider billingProvider;
+
     @InjectMocks
     private InvoiceServiceImpl service;
 
@@ -40,8 +54,10 @@ class InvoiceServiceImplTest {
         existing.setId(3L);
         existing.setPurchaseId(99L);
         existing.setInvoiceNumber("INV-20260422-99");
+        existing.setProviderStatus(BillingProviderStatus.VALIDATED_SIMULATED.name());
 
-        when(repository.findByPurchaseId(99L)).thenReturn(Optional.of(existing));
+        when(securityContextHelper.getTenantIdForInternalService("purchase-microservice")).thenReturn("tenant-1");
+        when(repository.findByPurchaseIdAndTenantId(99L, "tenant-1")).thenReturn(Optional.of(existing));
 
         var response = service.generate(baseRequest(99L));
 
@@ -52,7 +68,10 @@ class InvoiceServiceImplTest {
 
     @Test
     void generateShouldCreateInvoiceWhenPurchaseHasNoInvoice() {
-        when(repository.findByPurchaseId(100L)).thenReturn(Optional.empty());
+        when(securityContextHelper.getTenantIdForInternalService("purchase-microservice")).thenReturn("tenant-1");
+        when(repository.findByPurchaseIdAndTenantId(100L, "tenant-1")).thenReturn(Optional.empty());
+        when(billingProviderResolver.resolve()).thenReturn(billingProvider);
+        when(billingProvider.issueInvoice(any())).thenReturn(providerResponse());
         when(repository.save(any(Invoice.class))).thenAnswer(invocation -> {
             Invoice entity = invocation.getArgument(0);
             entity.setId(44L);
@@ -69,7 +88,8 @@ class InvoiceServiceImplTest {
 
     @Test
     void getByPurchaseIdShouldFailWhenInvoiceDoesNotExist() {
-        when(repository.findByPurchaseId(500L)).thenReturn(Optional.empty());
+        when(securityContextHelper.getTenantId()).thenReturn("tenant-1");
+        when(repository.findByPurchaseIdAndTenantId(500L, "tenant-1")).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> service.getByPurchaseId(500L));
 
@@ -91,7 +111,8 @@ class InvoiceServiceImplTest {
         invoice.setTotal(new BigDecimal("11900.00"));
         invoice.setIssuedAt(Instant.parse("2026-05-06T11:00:00Z"));
 
-        when(repository.findAllByOrderByIssuedAtDesc(PageRequest.of(0, 50))).thenReturn(List.of(invoice));
+        when(securityContextHelper.getTenantId()).thenReturn("tenant-1");
+        when(repository.findAllByTenantIdOrderByIssuedAtDesc("tenant-1", PageRequest.of(0, 50))).thenReturn(List.of(invoice));
 
         var response = service.getRecent(500);
 
@@ -116,6 +137,23 @@ class InvoiceServiceImplTest {
                         new BigDecimal("5000.00"),
                         new BigDecimal("10000.00")
                 ))
+        );
+    }
+
+    private BillingProviderResponse providerResponse() {
+        return new BillingProviderResponse(
+                "MOCK_DIAN",
+                "DEMO",
+                BillingProviderStatus.VALIDATED_SIMULATED,
+                "MOCK-INV",
+                "SIM-CUFE",
+                null,
+                "QR",
+                "<xml/>",
+                "demo://invoice.pdf",
+                "Documento demo",
+                Instant.parse("2026-04-22T11:00:00Z"),
+                false
         );
     }
 }

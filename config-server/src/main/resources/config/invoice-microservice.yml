@@ -26,6 +26,10 @@ billing:
   provider: ${BILLING_PROVIDER:MOCK_DIAN}
   environment: ${BILLING_ENVIRONMENT:DEMO}
   demo-legend: ${BILLING_DEMO_LEGEND:Documento generado en ambiente de demostración, sin validez tributaria.}
+  provider-base-url: ${BILLING_PROVIDER_BASE_URL:}
+  provider-username: ${BILLING_PROVIDER_USERNAME:}
+  provider-token: ${BILLING_PROVIDER_TOKEN:}
+  provider-timeout-ms: ${BILLING_PROVIDER_TIMEOUT_MS:10000}
   factus:
     api-base-url: ${FACTUS_API_BASE_URL:}
     api-key: ${FACTUS_API_KEY:}

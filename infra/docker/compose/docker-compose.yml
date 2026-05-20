@@ -79,6 +79,7 @@ services:
       - SERVICES_AUTH_URL=http://auth-microservice:8096
       - PURCHASE_SERVICE_URL=http://purchase-microservice:8094
       - INVOICE_SERVICE_URL=http://invoice-microservice:8095
+      - SERVICES_ANALYTICS_URL=http://analytics-service:8090
       - JWT_SECRET=${JWT_SECRET}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
     networks:
@@ -236,8 +237,37 @@ services:
       - JPA_DDL_AUTO=${JPA_DDL_AUTO:-update}
       - LIQUIBASE_ENABLED=${LIQUIBASE_ENABLED:-true}
       - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN}
+      - BILLING_PROVIDER=${BILLING_PROVIDER:-MOCK_DIAN}
+      - BILLING_PROVIDER_BASE_URL=${BILLING_PROVIDER_BASE_URL:-}
+      - BILLING_PROVIDER_USERNAME=${BILLING_PROVIDER_USERNAME:-}
+      - BILLING_PROVIDER_TOKEN=${BILLING_PROVIDER_TOKEN:-}
+      - BILLING_PROVIDER_TIMEOUT_MS=${BILLING_PROVIDER_TIMEOUT_MS:-10000}
+      - BILLING_ENVIRONMENT=${BILLING_ENVIRONMENT:-DEMO}
+      - BILLING_DEMO_LEGEND=${BILLING_DEMO_LEGEND:-Documento generado en ambiente de demostración, sin validez tributaria.}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    networks:
+      - microservices
+
+  analytics-service:
+    build:
+      context: ../../../../RematePos-Analytics
+      dockerfile: Dockerfile
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - "${ANALYTICS_PORT:-8090}:8090"
+    environment:
+      - ANALYTICS_PORT=${ANALYTICS_PORT:-8090}
+      - ANALYTICS_MODE=${ANALYTICS_MODE:-DEMO}
+      - DATABASE_URL=${ANALYTICS_DATABASE_URL:-}
+      - API_GATEWAY_URL=http://api-gateway:8080
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=docker,dev
     networks:
       - microservices
 

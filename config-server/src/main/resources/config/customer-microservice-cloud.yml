@@ -10,6 +10,9 @@ spring:
   cloud:
     discovery:
       enabled: ${SPRING_CLOUD_DISCOVERY_ENABLED:false}
+    service-registry:
+      auto-registration:
+        enabled: false
 
 server:
   port: ${PORT:${SERVER_PORT:8091}}
@@ -22,6 +25,10 @@ cors:
 
 management:
   health:
+    discovery:
+      enabled: false
+    eureka:
+      enabled: false
     mongodb:
       enabled: false
     mongo:

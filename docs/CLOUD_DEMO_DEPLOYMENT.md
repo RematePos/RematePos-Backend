@@ -81,6 +81,8 @@ Set these without committing values:
 
 For the cloud demo, MongoDB Atlas M0 is sufficient. Network Access can temporarily allow `0.0.0.0/0` only for the demo; restrict it before any production-like use. Customer cloud must not point to local MongoDB.
 
+Current Render note: the customer service display name is `rematepos-customer`, but its assigned `onrender.com` host is `https://tematepos-customer.onrender.com`. Use that exact host in `CUSTOMER_SERVICE_URL` unless the service is recreated with the intended slug.
+
 ## 6. Service URL Variables
 
 After Render creates the services, set these:

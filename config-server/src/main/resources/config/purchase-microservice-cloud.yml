@@ -14,7 +14,7 @@ spring:
 
 services:
   customer:
-    url: ${CUSTOMER_SERVICE_URL:http://localhost:8091}
+    url: ${CUSTOMER_SERVICE_URL:https://tematepos-customer.onrender.com}
   product:
     url: ${PRODUCT_SERVICE_URL:http://localhost:8092}
   invoice:
@@ -27,4 +27,3 @@ eureka:
 
 server:
   port: ${PORT:${PURCHASE_MICROSERVICE_PORT:8094}}
-

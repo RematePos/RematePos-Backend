@@ -1,0 +1,31 @@
+spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}}
+
+server:
+  port: ${PORT:${API_GATEWAY_PORT:8080}}
+
+services:
+  customer:
+    url: ${CUSTOMER_SERVICE_URL:http://localhost:8091}
+  product:
+    url: ${PRODUCT_SERVICE_URL:http://localhost:8092}
+  cart:
+    url: ${CART_SERVICE_URL:http://localhost:8093}
+  auth:
+    url: ${SERVICES_AUTH_URL:${AUTH_SERVICE_URL:http://localhost:8096}}
+  purchase:
+    url: ${PURCHASE_SERVICE_URL:http://localhost:8094}
+  invoice:
+    url: ${INVOICE_SERVICE_URL:http://localhost:8095}
+  analytics:
+    url: ${SERVICES_ANALYTICS_URL:http://localhost:8090}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001,http://localhost:3002}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}}
+

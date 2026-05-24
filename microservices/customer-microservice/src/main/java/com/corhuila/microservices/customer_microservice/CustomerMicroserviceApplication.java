@@ -1,5 +1,6 @@
 package com.corhuila.microservices.customer_microservice;
 
+import com.mongodb.ConnectionString;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -30,8 +31,11 @@ public class CustomerMicroserviceApplication {
 		}
 
 		if (explicitMongoUri != null && isBlank(System.getProperty("spring.data.mongodb.uri"))) {
-			System.setProperty("spring.data.mongodb.uri", explicitMongoUri);
+			System.setProperty("spring.data.mongodb.uri", normalizeMongoUri(explicitMongoUri));
 		}
+
+		var databaseName = firstNonBlank(System.getenv("CUSTOMER_DB_NAME"), "customer_db");
+		System.setProperty("spring.data.mongodb.database", databaseName);
 	}
 
 	private static boolean isCloudProfile(String[] args) {
@@ -73,6 +77,21 @@ public class CustomerMicroserviceApplication {
 
 	private static boolean hasMongoScheme(String value) {
 		return value.startsWith("mongodb://") || value.startsWith("mongodb+srv://");
+	}
+
+	private static String normalizeMongoUri(String value) {
+		var connectionString = new ConnectionString(value);
+		if (!isBlank(connectionString.getDatabase())) {
+			return value;
+		}
+
+		var databaseName = firstNonBlank(System.getenv("CUSTOMER_DB_NAME"), "customer_db");
+		var queryIndex = value.indexOf('?');
+		var base = queryIndex >= 0 ? value.substring(0, queryIndex) : value;
+		var query = queryIndex >= 0 ? value.substring(queryIndex) : "";
+		var separator = base.endsWith("/") ? "" : "/";
+
+		return base + separator + databaseName + query;
 	}
 
 	private static boolean isBlank(String value) {

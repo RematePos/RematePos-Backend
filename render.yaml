@@ -222,13 +222,23 @@ services:
         sync: false
       - key: EUREKA_SERVER_URL
         sync: false
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
       - key: SERVICES_AUTH_URL
+        sync: false
+      - key: AUTH_SERVICE_URL
         sync: false
       - key: PRODUCT_SERVICE_URL
         sync: false
       - key: PURCHASE_SERVICE_URL
         sync: false
       - key: INVOICE_SERVICE_URL
+        sync: false
+      - key: ANALYTICS_SERVICE_URL
+        sync: false
+      - key: SERVICES_ANALYTICS_URL
         sync: false
       - key: CUSTOMER_SERVICE_URL
         sync: false
@@ -238,4 +248,3 @@ services:
         sync: false
       - key: SPRING_CLOUD_CONFIG_FAIL_FAST
         value: "false"
-

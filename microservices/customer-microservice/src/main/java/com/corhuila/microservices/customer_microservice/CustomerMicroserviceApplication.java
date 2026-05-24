@@ -41,6 +41,8 @@ public class CustomerMicroserviceApplication {
 					new MapPropertySource(
 							"customerMongoUriOverride",
 							Map.of(
+									"spring.mongodb.uri", normalizedMongoUri,
+									"spring.mongodb.database", databaseName,
 									"spring.data.mongodb.uri", normalizedMongoUri,
 									"spring.data.mongodb.database", databaseName
 							)

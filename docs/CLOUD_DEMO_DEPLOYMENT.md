@@ -22,6 +22,7 @@ The goal is an academic demo URL that can:
 | auth-microservice | Web service | 8096 or `PORT` | `microservices/auth-microservice/Dockerfile` | Login and demo users |
 | product-microservice | Web service | 8092 or `PORT` | `microservices/product-microservice/Dockerfile` | Products and categories |
 | invoice-microservice | Web service | 8095 or `PORT` | `microservices/invoice-microservice/Dockerfile` | MOCK_DIAN demo billing |
+| customer-microservice | Web service | 8091 or `PORT` | `microservices/customer-microservice/Dockerfile` | Customer records and checkout customer lookup |
 | purchase-microservice | Web service | 8094 or `PORT` | `microservices/purchase-microservice/Dockerfile` | Sales/purchases |
 | api-gateway | Web service | 8080 or `PORT` | `api-gateway/Dockerfile` | Public backend URL |
 
@@ -47,9 +48,10 @@ The included `render.yaml` is a blueprint draft. It uses `sync: false` for secre
 4. `rematepos-auth`.
 5. `rematepos-product`.
 6. `rematepos-invoice`.
-7. `rematepos-purchase`.
-8. `rematepos-api-gateway`.
-9. Frontend in Vercel.
+7. `rematepos-customer`.
+8. `rematepos-purchase`.
+9. `rematepos-api-gateway`.
+10. Frontend in Vercel.
 
 If time is short, deploy through API Gateway with auth and product first. Add purchase only if customer dependency is resolved.
 
@@ -73,6 +75,11 @@ Set these without committing values:
 | `BILLING_PROVIDER` | invoice | Use `MOCK_DIAN` for stable demo |
 | `BILLING_PROVIDER_BASE_URL` | invoice | Empty for MOCK_DIAN |
 | `BILLING_SETTINGS_ENCRYPTION_KEY` | invoice | Required if tenant billing settings are used |
+| `SPRING_DATA_MONGODB_URI` | customer | Primary Atlas URI secret; do not print or commit |
+| `SPRING_MONGODB_URI` | customer | Optional fallback Atlas URI secret, same value if configured |
+| `CUSTOMER_DB_NAME` | customer | `customer_db` |
+
+For the cloud demo, MongoDB Atlas M0 is sufficient. Network Access can temporarily allow `0.0.0.0/0` only for the demo; restrict it before any production-like use. Customer cloud must not point to local MongoDB.
 
 ## 6. Service URL Variables
 
@@ -159,4 +166,3 @@ For academic delivery, the safest minimum is:
 - documented limitation for purchases until customer service is also cloud-hosted.
 
 Keep the ZIP and final docs as the official fallback if the cloud deployment exceeds the available time.
-

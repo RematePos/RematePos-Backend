@@ -206,6 +206,12 @@ services:
         sync: false
       - key: EUREKA_SERVER_URL
         sync: false
+      - key: SPRING_CLOUD_CONFIG_FAIL_FAST
+        value: "false"
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
       - key: POSTGRESQL_HOST
         fromDatabase:
           name: rematepos-postgres

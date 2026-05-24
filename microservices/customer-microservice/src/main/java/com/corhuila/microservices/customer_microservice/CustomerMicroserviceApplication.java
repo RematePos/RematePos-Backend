@@ -3,16 +3,20 @@ package com.corhuila.microservices.customer_microservice;
 import com.mongodb.ConnectionString;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.MapPropertySource;
+
+import java.util.Map;
 
 @SpringBootApplication
 public class CustomerMicroserviceApplication {
 
 	public static void main(String[] args) {
-		applyMongoUriEnvironmentFallback(args);
-		SpringApplication.run(CustomerMicroserviceApplication.class, args);
+		var application = new SpringApplication(CustomerMicroserviceApplication.class);
+		applyMongoUriEnvironmentFallback(application, args);
+		application.run(args);
 	}
 
-	private static void applyMongoUriEnvironmentFallback(String[] args) {
+	private static void applyMongoUriEnvironmentFallback(SpringApplication application, String[] args) {
 		var explicitMongoUri = firstNonBlank(
 				System.getenv("SPRING_DATA_MONGODB_URI"),
 				System.getenv("SPRING_MONGODB_URI")
@@ -30,12 +34,19 @@ public class CustomerMicroserviceApplication {
 			);
 		}
 
-		if (explicitMongoUri != null && isBlank(System.getProperty("spring.data.mongodb.uri"))) {
-			System.setProperty("spring.data.mongodb.uri", normalizeMongoUri(explicitMongoUri));
-		}
-
 		var databaseName = firstNonBlank(System.getenv("CUSTOMER_DB_NAME"), "customer_db");
-		System.setProperty("spring.data.mongodb.database", databaseName);
+		if (explicitMongoUri != null) {
+			var normalizedMongoUri = normalizeMongoUri(explicitMongoUri);
+			application.addInitializers(context -> context.getEnvironment().getPropertySources().addFirst(
+					new MapPropertySource(
+							"customerMongoUriOverride",
+							Map.of(
+									"spring.data.mongodb.uri", normalizedMongoUri,
+									"spring.data.mongodb.database", databaseName
+							)
+					)
+			));
+		}
 	}
 
 	private static boolean isCloudProfile(String[] args) {

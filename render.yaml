@@ -81,6 +81,34 @@ services:
       - key: AUTH_PLATFORM_ADMIN_PASSWORD
         sync: false
 
+  - name: rematepos-customer
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/customer-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: SPRING_CLOUD_CONFIG_FAIL_FAST
+        value: "false"
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
+      - key: SPRING_MONGODB_URI
+        sync: false
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
+      - key: CUSTOMER_DB_NAME
+        value: customer_db
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
   - name: rematepos-product
     type: web
     runtime: docker
@@ -201,7 +229,7 @@ services:
       - key: INTERNAL_SERVICE_TOKEN
         sync: false
       - key: CUSTOMER_SERVICE_URL
-        sync: false
+        value: https://rematepos-customer.onrender.com
       - key: PRODUCT_SERVICE_URL
         sync: false
       - key: INVOICE_SERVICE_URL
@@ -241,7 +269,7 @@ services:
       - key: SERVICES_ANALYTICS_URL
         sync: false
       - key: CUSTOMER_SERVICE_URL
-        sync: false
+        value: https://rematepos-customer.onrender.com
       - key: CORS_ALLOWED_ORIGINS
         sync: false
       - key: JWT_SECRET

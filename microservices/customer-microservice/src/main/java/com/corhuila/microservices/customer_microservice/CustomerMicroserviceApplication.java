@@ -73,7 +73,7 @@ public class CustomerMicroserviceApplication {
 	private static String firstNonBlank(String... values) {
 		for (String value : values) {
 			if (!isBlank(value)) {
-				return value;
+				return value.trim();
 			}
 		}
 		return null;
@@ -93,6 +93,7 @@ public class CustomerMicroserviceApplication {
 	}
 
 	private static String normalizeMongoUri(String value) {
+		value = value.trim();
 		var connectionString = new ConnectionString(value);
 		if (!isBlank(connectionString.getDatabase())) {
 			return value;

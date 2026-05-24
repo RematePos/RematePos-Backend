@@ -1,6 +1,9 @@
 spring:
   config:
-    import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}}
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://rematepos-config-server.onrender.com}}
+  cloud:
+    config:
+      fail-fast: ${SPRING_CLOUD_CONFIG_FAIL_FAST:false}
 
 server:
   port: ${PORT:${API_GATEWAY_PORT:8080}}

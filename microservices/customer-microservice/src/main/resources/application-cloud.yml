@@ -26,6 +26,8 @@ cors:
 
 management:
   health:
+    mongodb:
+      enabled: false
     mongo:
       enabled: false
   endpoints:

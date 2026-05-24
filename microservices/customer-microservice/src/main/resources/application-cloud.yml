@@ -1,4 +1,10 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.mongodb.autoconfigure.health.MongoHealthContributorAutoConfiguration
+      - org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
+      - org.springframework.cloud.netflix.eureka.EurekaDiscoveryClientConfiguration
+      - org.springframework.cloud.netflix.eureka.reactive.EurekaReactiveDiscoveryClientConfiguration
   config:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://rematepos-config-server.onrender.com}}
   cloud:

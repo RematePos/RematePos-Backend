@@ -1,4 +1,10 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.mongodb.autoconfigure.health.MongoHealthContributorAutoConfiguration
+      - org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration
+      - org.springframework.cloud.netflix.eureka.EurekaDiscoveryClientConfiguration
+      - org.springframework.cloud.netflix.eureka.reactive.EurekaReactiveDiscoveryClientConfiguration
   mongodb:
     uri: ${SPRING_MONGODB_URI:${SPRING_DATA_MONGODB_URI:}}
     database: ${CUSTOMER_DB_NAME:customer_db}

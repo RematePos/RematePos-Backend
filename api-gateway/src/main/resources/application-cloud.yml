@@ -1,0 +1,36 @@
+spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://rematepos-config-server.onrender.com}}
+  cloud:
+    config:
+      fail-fast: ${SPRING_CLOUD_CONFIG_FAIL_FAST:false}
+    discovery:
+      enabled: ${SPRING_CLOUD_DISCOVERY_ENABLED:false}
+
+server:
+  port: ${PORT:${API_GATEWAY_PORT:8080}}
+
+services:
+  customer:
+    url: ${CUSTOMER_SERVICE_URL:https://tematepos-customer.onrender.com}
+  product:
+    url: ${PRODUCT_SERVICE_URL:https://rematepos-product.onrender.com}
+  cart:
+    url: ${CART_SERVICE_URL:http://localhost:8093}
+  auth:
+    url: ${SERVICES_AUTH_URL:${AUTH_SERVICE_URL:https://rematepos-auth.onrender.com}}
+  purchase:
+    url: ${PURCHASE_SERVICE_URL:https://rematepos-purchase.onrender.com}
+  invoice:
+    url: ${INVOICE_SERVICE_URL:https://rematepos-invoice.onrender.com}
+  analytics:
+    url: ${SERVICES_ANALYTICS_URL:${ANALYTICS_SERVICE_URL:https://rematepos-analytics.onrender.com}}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://rematepos-frontend.onrender.com,http://localhost:3000,http://localhost:3001,http://localhost:3002}
+
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}}

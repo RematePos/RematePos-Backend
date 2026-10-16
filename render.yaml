@@ -1,0 +1,284 @@
+# Render Blueprint draft for the RematePOS academic cloud demo.
+# Fill sync:false values in the Render dashboard. Do not commit real secrets.
+
+databases:
+  - name: rematepos-postgres
+    databaseName: rematepos
+    user: rematepos
+
+services:
+  - name: rematepos-config-server
+    type: web
+    runtime: docker
+    dockerfilePath: ./config-server/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+
+  - name: rematepos-discovery-server
+    type: web
+    runtime: docker
+    dockerfilePath: ./discovery-server/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+
+  - name: rematepos-auth
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/auth-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: EUREKA_SERVER_URL
+        sync: false
+      - key: POSTGRESQL_HOST
+        fromDatabase:
+          name: rematepos-postgres
+          property: host
+      - key: POSTGRESQL_PORT
+        fromDatabase:
+          name: rematepos-postgres
+          property: port
+      - key: POSTGRESQL_DB_USERNAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: user
+      - key: POSTGRESQL_DB_PASSWORD
+        fromDatabase:
+          name: rematepos-postgres
+          property: password
+      - key: AUTH_DB_NAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: database
+      - key: JWT_SECRET
+        sync: false
+      - key: AUTH_SEED_DEMO_USERS
+        value: "true"
+      - key: AUTH_SEED_PLATFORM_ADMIN
+        value: "true"
+      - key: AUTH_DEMO_REGISTRATION_ENABLED
+        value: "true"
+      - key: AUTH_DEMO_ADMIN_PASSWORD
+        sync: false
+      - key: AUTH_DEMO_CASHIER_PASSWORD
+        sync: false
+      - key: AUTH_PLATFORM_ADMIN_PASSWORD
+        sync: false
+
+  - name: rematepos-customer
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/customer-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: SPRING_CLOUD_CONFIG_FAIL_FAST
+        value: "false"
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
+      - key: SPRING_MONGODB_URI
+        sync: false
+      - key: SPRING_DATA_MONGODB_URI
+        sync: false
+      - key: CUSTOMER_DB_NAME
+        value: customer_db
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  - name: rematepos-product
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/product-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: EUREKA_SERVER_URL
+        sync: false
+      - key: POSTGRESQL_HOST
+        fromDatabase:
+          name: rematepos-postgres
+          property: host
+      - key: POSTGRESQL_PORT
+        fromDatabase:
+          name: rematepos-postgres
+          property: port
+      - key: POSTGRESQL_DB_USERNAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: user
+      - key: POSTGRESQL_DB_PASSWORD
+        fromDatabase:
+          name: rematepos-postgres
+          property: password
+      - key: PRODUCT_DB_NAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: database
+      - key: INTERNAL_SERVICE_TOKEN
+        sync: false
+
+  - name: rematepos-invoice
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/invoice-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: EUREKA_SERVER_URL
+        sync: false
+      - key: POSTGRESQL_HOST
+        fromDatabase:
+          name: rematepos-postgres
+          property: host
+      - key: POSTGRESQL_PORT
+        fromDatabase:
+          name: rematepos-postgres
+          property: port
+      - key: POSTGRESQL_DB_USERNAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: user
+      - key: POSTGRESQL_DB_PASSWORD
+        fromDatabase:
+          name: rematepos-postgres
+          property: password
+      - key: INVOICE_DB_NAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: database
+      - key: INTERNAL_SERVICE_TOKEN
+        sync: false
+      - key: BILLING_PROVIDER
+        value: MOCK_DIAN
+      - key: BILLING_PROVIDER_BASE_URL
+        sync: false
+      - key: BILLING_SETTINGS_ENCRYPTION_KEY
+        sync: false
+
+  - name: rematepos-purchase
+    type: web
+    runtime: docker
+    dockerfilePath: ./microservices/purchase-microservice/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: EUREKA_SERVER_URL
+        sync: false
+      - key: SPRING_CLOUD_CONFIG_FAIL_FAST
+        value: "false"
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
+      - key: POSTGRESQL_HOST
+        fromDatabase:
+          name: rematepos-postgres
+          property: host
+      - key: POSTGRESQL_PORT
+        fromDatabase:
+          name: rematepos-postgres
+          property: port
+      - key: POSTGRESQL_DB_USERNAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: user
+      - key: POSTGRESQL_DB_PASSWORD
+        fromDatabase:
+          name: rematepos-postgres
+          property: password
+      - key: PURCHASE_DB_NAME
+        fromDatabase:
+          name: rematepos-postgres
+          property: database
+      - key: INTERNAL_SERVICE_TOKEN
+        sync: false
+      - key: CUSTOMER_SERVICE_URL
+        value: https://tematepos-customer.onrender.com
+      - key: PRODUCT_SERVICE_URL
+        sync: false
+      - key: INVOICE_SERVICE_URL
+        sync: false
+
+  - name: rematepos-api-gateway
+    type: web
+    runtime: docker
+    dockerfilePath: ./api-gateway/Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: CONFIG_SERVER_URL
+        sync: false
+      - key: SPRING_CONFIG_IMPORT
+        sync: false
+      - key: EUREKA_SERVER_URL
+        sync: false
+      - key: EUREKA_CLIENT_ENABLED
+        value: "false"
+      - key: SPRING_CLOUD_DISCOVERY_ENABLED
+        value: "false"
+      - key: SERVICES_AUTH_URL
+        sync: false
+      - key: AUTH_SERVICE_URL
+        sync: false
+      - key: PRODUCT_SERVICE_URL
+        sync: false
+      - key: PURCHASE_SERVICE_URL
+        sync: false
+      - key: INVOICE_SERVICE_URL
+        sync: false
+      - key: ANALYTICS_SERVICE_URL
+        sync: false
+      - key: SERVICES_ANALYTICS_URL
+        sync: false
+      - key: CUSTOMER_SERVICE_URL
+        value: https://tematepos-customer.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: SPRING_CLOUD_CONFIG_FAIL_FAST
+        value: "false"

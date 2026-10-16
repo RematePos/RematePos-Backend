@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:${POSTGRESQL_DB_PORT:5432}}/${AUTH_DB_NAME:auth_db}}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRESQL_DB_USERNAME:}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRESQL_DB_PASSWORD:}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED:true}
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
+auth:
+  demo-registration-enabled: ${AUTH_DEMO_REGISTRATION_ENABLED:true}
+  seed-demo-users: ${AUTH_SEED_DEMO_USERS:true}
+  demo-admin-password: ${AUTH_DEMO_ADMIN_PASSWORD:}
+  demo-cashier-password: ${AUTH_DEMO_CASHIER_PASSWORD:}
+  seed-platform-admin: ${AUTH_SEED_PLATFORM_ADMIN:true}
+  platform-admin-username: ${AUTH_PLATFORM_ADMIN_USERNAME:platform.admin}
+  platform-admin-password: ${AUTH_PLATFORM_ADMIN_PASSWORD:}
+  platform-admin-email: ${AUTH_PLATFORM_ADMIN_EMAIL:platform.admin@example.com}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}}
+
+server:
+  port: ${PORT:${AUTH_MICROSERVICE_PORT:8096}}
+

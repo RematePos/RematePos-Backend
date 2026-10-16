@@ -1,0 +1,9 @@
+server:
+  port: ${PORT:${CONFIG_SERVER_PORT:8888}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

@@ -5,7 +5,7 @@ spring:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://config-server:8888}
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 services:
   customer:

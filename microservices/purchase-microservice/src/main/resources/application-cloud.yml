@@ -1,0 +1,25 @@
+spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}}
+  cloud:
+    config:
+      fail-fast: ${SPRING_CLOUD_CONFIG_FAIL_FAST:false}
+    discovery:
+      enabled: ${SPRING_CLOUD_DISCOVERY_ENABLED:false}
+
+server:
+  port: ${PORT:${PURCHASE_MICROSERVICE_PORT:8094}}
+
+services:
+  customer:
+    url: ${CUSTOMER_SERVICE_URL:https://tematepos-customer.onrender.com}
+  product:
+    url: ${PRODUCT_SERVICE_URL:https://rematepos-product.onrender.com}
+  invoice:
+    url: ${INVOICE_SERVICE_URL:https://rematepos-invoice.onrender.com}
+
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}}

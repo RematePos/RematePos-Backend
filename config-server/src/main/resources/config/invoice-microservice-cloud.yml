@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${POSTGRESQL_HOST:localhost}:${POSTGRESQL_PORT:${POSTGRESQL_DB_PORT:5432}}/${INVOICE_DB_NAME:invoice_db}}
+    username: ${SPRING_DATASOURCE_USERNAME:${POSTGRESQL_DB_USERNAME:}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${POSTGRESQL_DB_PASSWORD:}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: ${LIQUIBASE_ENABLED:true}
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}}
+
+billing:
+  provider: ${BILLING_PROVIDER:MOCK_DIAN}
+  environment: ${BILLING_ENVIRONMENT:DEMO}
+  demo-legend: ${BILLING_DEMO_LEGEND:Documento generado en ambiente de demostracion, sin validez tributaria.}
+  provider-base-url: ${BILLING_PROVIDER_BASE_URL:}
+  provider-username: ${BILLING_PROVIDER_USERNAME:}
+  provider-timeout-ms: ${BILLING_PROVIDER_TIMEOUT_MS:10000}
+  settings:
+    encryption-key: ${BILLING_SETTINGS_ENCRYPTION_KEY:}
+
+server:
+  port: ${PORT:${INVOICE_MICROSERVICE_PORT:8095}}

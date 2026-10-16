@@ -1,6 +1,43 @@
 # Cloud Demo Deployment
 
-This document prepares a minimum public RematePOS demo with Vercel for the frontend, Render for backend services, and Render PostgreSQL. It intentionally avoids real secrets, local `.env` files, and production credentials.
+The public demo uses a Render Static Site for the frontend, Docker web services on Render, Neon Free for PostgreSQL, and MongoDB Atlas Free for customer records. Secrets remain in Render environment variables, never in local `.env` files or this repository.
+
+## Free Plan Recovery (October 2026)
+
+- Neon project: `rematepos-cloud-demo`, PostgreSQL 16, database `rematepos`, AWS Oregon, Free plan. This replaces the unavailable Render PostgreSQL connection; it does not restore historical sales.
+- Atlas project: `RematePOS-Cloud-Demo`, Free/M0 only. Do not select Flex, Dedicated, or paid backup options.
+- The frontend remains `https://rematepos-frontend.onrender.com`; no Vercel deployment is required for this demo.
+- The actual customer hostname is `https://tematepos-customer.onrender.com`.
+- Render Free services sleep when idle. Neon Free has usage limits and scale-to-zero. Atlas Free can pause after extended inactivity. These are demo services, not an always-on availability guarantee.
+- Render Free PostgreSQL expires after 30 days. Do not create it for this persistent free demo. The historical Render database blueprint below is not the live database source.
+
+For auth, product, invoice, and purchase, set these variables in Render:
+
+```text
+SPRING_PROFILES_ACTIVE=cloud
+SPRING_DATASOURCE_URL=<private Neon JDBC URL with sslmode=require>
+SPRING_DATASOURCE_USERNAME=<private database user>
+SPRING_DATASOURCE_PASSWORD=<private database password>
+SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=5
+SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE=0
+SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT=60000
+CONFIG_SERVER_URL=https://rematepos-config-server.onrender.com
+SPRING_CONFIG_IMPORT=optional:configserver:https://rematepos-config-server.onrender.com
+SPRING_CLOUD_CONFIG_FAIL_FAST=false
+SPRING_CLOUD_CONFIG_REQUEST_CONNECT_TIMEOUT=3000
+SPRING_CLOUD_CONFIG_REQUEST_READ_TIMEOUT=5000
+EUREKA_CLIENT_ENABLED=false
+SPRING_CLOUD_DISCOVERY_ENABLED=false
+SPRING_CLOUD_SERVICE_REGISTRY_AUTO_REGISTRATION_ENABLED=false
+```
+
+Keep `AUTH_DB_NAME`, `PRODUCT_DB_NAME`, `INVOICE_DB_NAME`, and `PURCHASE_DB_NAME` aligned with `rematepos`. If legacy `POSTGRESQL_*` variables remain, align them with the same Neon connection. Auth still requires the existing `JWT_SECRET` and demo seed passwords; its cloud profile resolves JWT settings even when Config Server is unavailable. Keep `BILLING_PROVIDER=MOCK_DIAN` and all existing internal service tokens.
+
+Analytics uses the same database through `DATABASE_URL`, `PRODUCT_DATABASE_URL`, `PURCHASE_DATABASE_URL`, and `INVOICE_DATABASE_URL`. Use PostgreSQL/psycopg2 URLs with TLS. Do not print or commit any connection value.
+
+Update Render variables individually, or preserve the complete original set before a bulk replacement. Verify that unrelated variable names are retained. Deploy auth first, then product and invoice, then purchase and analytics; validate health and authenticated endpoints after deployment.
+
+The remaining sections describe the original deployment blueprint. Use the recovery configuration above for the current demo.
 
 ## 1. Target
 

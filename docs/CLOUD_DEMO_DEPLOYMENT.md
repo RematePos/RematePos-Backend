@@ -5,7 +5,7 @@ The public demo uses a Render Static Site for the frontend, Docker web services 
 ## Free Plan Recovery (October 2026)
 
 - Neon project: `rematepos-cloud-demo`, PostgreSQL 16, database `rematepos`, AWS Oregon, Free plan. This replaces the unavailable Render PostgreSQL connection; it does not restore historical sales.
-- Atlas project: `RematePOS-Cloud-Demo`, Free/M0 only. Do not select Flex, Dedicated, or paid backup options.
+- Atlas project: `RematePOS-Cloud-Demo`, cluster `RematePOS-Customer`, AWS N. Virginia, Free/M0 (512 MB). Do not select Flex, Dedicated, or paid backup options. See [Customer Cloud Deployment](CUSTOMER_CLOUD_DEPLOYMENT.md) for the connection setup.
 - The frontend remains `https://rematepos-frontend.onrender.com`; no Vercel deployment is required for this demo.
 - The actual customer hostname is `https://tematepos-customer.onrender.com`.
 - Render Free services sleep when idle. Neon Free has usage limits and scale-to-zero. Atlas Free can pause after extended inactivity. These are demo services, not an always-on availability guarantee.
@@ -116,7 +116,7 @@ Set these without committing values:
 | `SPRING_MONGODB_URI` | customer | Optional fallback Atlas URI secret, same value if configured |
 | `CUSTOMER_DB_NAME` | customer | `customer_db` |
 
-For the cloud demo, MongoDB Atlas M0 is sufficient. Network Access can temporarily allow `0.0.0.0/0` only for the demo; restrict it before any production-like use. Customer cloud must not point to local MongoDB.
+For the cloud demo, MongoDB Atlas M0 is sufficient. Prefer the customer service's current Render outbound CIDR ranges in Atlas Network Access instead of `0.0.0.0/0`. Retrieve the ranges from Render's Connect > Outbound panel or its public API; they are shared by regional services, not exclusive to this application. Customer cloud must not point to local MongoDB.
 
 Current Render note: the customer service display name is `rematepos-customer`, but its assigned `onrender.com` host is `https://tematepos-customer.onrender.com`. Use that exact host in `CUSTOMER_SERVICE_URL` unless the service is recreated with the intended slug.
 
